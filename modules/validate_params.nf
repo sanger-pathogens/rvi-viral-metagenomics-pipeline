@@ -14,40 +14,6 @@ def VALIDATE_PARAMETERS() {
         errors += 1
     }
 
-    if (params.reference) {
-        reference=file(params.reference)
-        if (!reference.exists()) {
-            log.error("The reference file specified does not exist.")
-            errors += 1
-        }
-    }
-    else {
-        log.error("No reference file specified. Please specify one using the --reference option.")
-        errors += 1
-    }
-
-    if (params.samtools_threads) {
-        if (!params.samtools_threads.toString().isInteger()) {
-        log.error("Please ensure the --samtools_threads parameter is a number or leave as default")
-        errors += 1
-        }
-    }
-    else {
-        log.error("Please specify the number of threads for samtools using the --samtools_threads option")
-        errors += 1
-    }
-
-    if (params.minimap2_threads) {
-        if (!params.minimap2_threads.toString().isInteger()) {
-        log.error("Please ensure the --minimap2_threads parameter is a number or leave as default")
-        errors += 1
-        }
-    }
-    else {
-        log.error("Please specify the number of threads for samtools using the --minimap2_threads option")
-        errors += 1
-    }
-
     if (params.results_dir) {
         results_dir_path=file(params.results_dir)
         if (!results_dir_path.getParent().exists()) {
