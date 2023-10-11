@@ -4,7 +4,9 @@
 // MODULES
 //
 
-include { VALIDATE_PARAMETERS                                                                                                                           } from './modules/validate_params.nf'
+include { VALIDATE_PARAMETERS  } from './modules/validate_params.nf'
+include { KNEADDATA            } from "./modules/kneaddata.nf"
+
 
 //
 // SUBWORKFLOWS
@@ -35,4 +37,5 @@ workflow {
     manifest = file(params.manifest)
 
     INPUT_CHECK(manifest)
+    | KNEADDATA
 }
