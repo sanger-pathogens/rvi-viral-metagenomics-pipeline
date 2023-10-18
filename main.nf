@@ -6,6 +6,7 @@
 
 include { VALIDATE_PARAMETERS  } from './modules/validate_params.nf'
 include { KNEADDATA            } from "./modules/kneaddata.nf"
+include { METASPADES           } from "./modules/metaspades.nf"
 
 
 //

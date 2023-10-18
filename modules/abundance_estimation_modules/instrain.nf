@@ -1,5 +1,6 @@
 process INSTRAIN {
     tag "${sample_id}"
+    label 'mem_4'
     label 'time_queue_from_normal'
 
     container '/software/pathogen/images/instrain-1.6.4-c2.simg'
