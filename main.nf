@@ -6,6 +6,7 @@
 
 include { VALIDATE_PARAMETERS  } from './modules/validate_params.nf'
 include { KNEADDATA            } from "./modules/kneaddata.nf"
+include { METASPADES           } from "./modules/metaspades.nf"
 
 
 //
@@ -39,6 +40,7 @@ workflow {
 
     INPUT_CHECK(manifest)
     | KNEADDATA
+    | METASPADES
 
 
     KNEADDATA.out.paired_channel.map{ meta, R1 , R2 -> 
@@ -47,5 +49,4 @@ workflow {
     }.set{ meta_removed_channel }
 
     ABUNDANCE_ESTIMATION(meta_removed_channel)
-
 }
