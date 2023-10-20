@@ -14,6 +14,7 @@ include { METASPADES           } from "./modules/metaspades.nf"
 //
 include { INPUT_CHECK    } from './subworkflows/input_check.nf'
 include { ABUNDANCE_ESTIMATION   } from './subworkflows/abundance_estimation.nf'
+include { KRAKEN2BRACKEN         } from './subworkflows/kraken2bracken.nf'
 
 
 def printHelp() {
@@ -49,4 +50,14 @@ workflow {
     }.set{ meta_removed_channel }
 
     ABUNDANCE_ESTIMATION(meta_removed_channel)
+
+    KNEADDATA.out.paired_channel.map{ meta, R1 , R2 -> 
+        meta_new = [:]
+        meta_new.id = meta.ID
+        reads = tuple(R1, R2)
+        [meta_new, reads ]
+    }.set{ combined_reads_channel }
+
+
+    KRAKEN2BRACKEN(combined_reads_channel)
 }
