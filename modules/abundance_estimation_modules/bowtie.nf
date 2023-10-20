@@ -19,6 +19,8 @@ process BOWTIE_INDEX {
 
 process BOWTIE2SAMTOOLS {
     tag "${sample_id}"
+    label 'cpu_4'
+    label 'mem_4'
     label 'time_queue_from_normal'
 
     container '/software/pathogen/images/bowtie2-samtools-1.1-c1.simg'
