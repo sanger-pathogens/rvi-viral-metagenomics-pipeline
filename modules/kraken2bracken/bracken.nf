@@ -31,14 +31,14 @@ process KMER2READ_DIST {
     tuple path(kraken2_db), path(kraken2_library)
 
     output:
-    path("database${params.kraken2bracken_read_len}mers.kraken"),  emit: kmer2read_distr
+    path("database${params.kraken2bracken_kmer_len}mers.kraken"),  emit: kmer2read_distr
 
     script:
     """
     kmer2read_distr --seqid2taxid ${kraken2_db}/seqid2taxid.map \
                     --taxonomy ${kraken2_db}/taxonomy \
                     --kraken ${kraken2_library} \
-                    --output database${params.kraken2bracken_read_len}mers.kraken \
+                    --output database${params.kraken2bracken_kmer_len}mers.kraken \
                     -k ${params.kraken2bracken_kmer_len} \
                     -l ${params.kraken2bracken_read_len} \
                     -t ${task.cpus}
@@ -62,8 +62,8 @@ process GENERATE_KMER_DISTRIBUTION {
 
     script:
     """
-    generate_kmer_distribution.py -i database${params.kraken2bracken_read_len}mers.kraken \
-                                  -o database${params.kraken2bracken_read_len}mers.kmer_distrib
+    generate_kmer_distribution.py -i database${params.kraken2bracken_kmer_len}mers.kraken \
+                                  -o database${params.kraken2bracken_kmer_len}mers.kmer_distrib
     """
 }
 
