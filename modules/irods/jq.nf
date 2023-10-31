@@ -22,7 +22,9 @@ process JSON_PREP {
 }
 
 process JSON_PARSE {
-    label 'cpu_2_mem_1_time_1'
+    label 'cpu_2'
+    label 'mem_1'
+    label 'time_1'
     input:
     path(lane_file)
 

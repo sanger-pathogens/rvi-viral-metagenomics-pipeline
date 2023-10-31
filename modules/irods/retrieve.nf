@@ -1,5 +1,7 @@
 process RETRIEVE_CRAM {
-    label 'cpu_2_mem_1_time_1'
+    label 'cpu_2'
+    label 'mem_1'
+    label 'time_1'
     input:
     tuple val(meta), val(cram_path)
 

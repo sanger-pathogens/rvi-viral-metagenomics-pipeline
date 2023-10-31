@@ -1,5 +1,7 @@
 process BATON {
-    label 'cpu_2_mem_1_time_1'
+    label 'cpu_2'
+    label 'mem_1'
+    label 'time_1'
     maxForks = 10
     container "/software/hgi/containers/singularity-baton/baton.simg"
     input:

@@ -1,5 +1,7 @@
 process COLLATE_CRAM {
-    label 'cpu_2_mem_1_time_1'
+    label 'cpu_2'
+    label 'mem_1'
+    label 'time_1'
     container "/software/pathogen/images/samtools-1.17.simg"
     input:
     tuple val(meta), path(cram)
@@ -15,7 +17,9 @@ process COLLATE_CRAM {
 }
 
 process FASTQ_FROM_CBAM {
-    label 'cpu_2_mem_1_time_1'
+    label 'cpu_2'
+    label 'mem_1'
+    label 'time_1'
     container "/software/pathogen/images/samtools-1.17.simg"
 
     publishDir "${params.results_dir}/${meta.ID}/raw_fastq/", mode: 'copy', overwrite: true, pattern: "*_1.fastq.gz", saveAs: { filename -> "raw_${forward_fastq}" }
