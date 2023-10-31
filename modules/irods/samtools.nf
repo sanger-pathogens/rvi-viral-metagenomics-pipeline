@@ -1,0 +1,42 @@
+process COLLATE_CRAM {
+    label 'cpu_2_mem_1_time_1'
+    container "/software/pathogen/images/samtools-1.17.simg"
+    input:
+    tuple val(meta), path(cram)
+
+    output:
+    tuple val(meta), path(bam), emit: bam_channel
+
+    script:
+    bam = "${meta.ID}.bam"
+    """
+    samtools collate -u -o ${bam} -f ${cram} -@ ${task.cpus}
+    """
+}
+
+process FASTQ_FROM_CBAM {
+    label 'cpu_2_mem_1_time_1'
+    container "/software/pathogen/images/samtools-1.17.simg"
+
+    publishDir "${params.results_dir}/${meta.ID}/raw_fastq/", mode: 'copy', overwrite: true, pattern: "*_1.fastq.gz", saveAs: { filename -> "raw_${forward_fastq}" }
+    publishDir "${params.results_dir}/${meta.ID}/raw_fastq/", mode: 'copy', overwrite: true, pattern: "*_2.fastq.gz", saveAs: { filename -> "raw_${reverse_fastq}" }
+
+    input:
+    tuple val(meta), path(bam)
+
+    output:
+    tuple val(meta), path(forward_fastq), path(reverse_fastq), emit: fastq_channel
+    val(meta), emit: metadata_channel
+    val("ready"), emit: ready_channel
+
+    script:
+    forward_fastq = "${meta.ID}_1.fastq.gz"
+    reverse_fastq = "${meta.ID}_2.fastq.gz"
+    """
+    samtools fastq -N \
+        -1 ${forward_fastq} \
+        -2 ${reverse_fastq} \
+        -@ ${task.cpus} \
+        ${bam}
+    """
+}

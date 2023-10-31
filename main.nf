@@ -15,6 +15,7 @@ include { METASPADES           } from "./modules/metaspades.nf"
 include { INPUT_CHECK    } from './subworkflows/input_check.nf'
 include { ABUNDANCE_ESTIMATION   } from './subworkflows/abundance_estimation.nf'
 include { KRAKEN2BRACKEN         } from './subworkflows/kraken2bracken.nf'
+include { IRODS_EXTRACT    } from './subworkflows/irods.nf'
 
 
 def printHelp() {
@@ -36,10 +37,8 @@ workflow {
 
     //perform precheck
     VALIDATE_PARAMETERS()
-    
-    manifest = file(params.manifest)
 
-    INPUT_CHECK(manifest)
+    IRODS_EXTRACT("${params.input_name}")
     | KNEADDATA
     | METASPADES
 
