@@ -3,7 +3,7 @@ process BATON {
     label 'mem_1'
     label 'time_1'
     maxForks = 10
-    container "/software/hgi/containers/singularity-baton/baton.simg"
+    container "/software/pathogen/images/baton.simg"
     input:
     path(json_file)
 
