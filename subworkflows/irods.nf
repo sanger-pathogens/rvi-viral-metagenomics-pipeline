@@ -22,7 +22,7 @@ workflow IRODS_EXTRACT {
     existing_files = Channel.fromPath("${params.results_dir}/*#*/raw_fastq/*_1.fastq.gz")
 
     existing_files.map{ assembly_path ->
-        ID = assembly_path.toString().split("/")[-1].split("_1.fastq.gz")[0]
+        ID = assembly_path.simpleName.split("_1")[0]
     }.set{ existing_id }
 
     meta_cram_ch.branch{ meta, cram_path ->
