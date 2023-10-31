@@ -15,7 +15,7 @@ workflow IRODS_EXTRACT {
 
     JSON_PARSE.out.splitText().map{ cram_path ->
         def meta = [:]
-        meta.ID = cram_path.split("/")[-1].split(".cram")[0]
+        meta.ID = file(cram_path).simpleName
         [ meta, cram_path ]
     }.set{ meta_cram_ch }
 
