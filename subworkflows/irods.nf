@@ -19,9 +19,7 @@ workflow IRODS_EXTRACT {
         [ meta, cram_path ]
     }.set{ meta_cram_ch }
 
-    existing_files = Channel.fromPath("${params.results_dir}/*#*/raw_fastq/*_1.fastq.gz")
-
-    existing_files.map{ assembly_path ->
+    Channel.fromPath("${params.results_dir}/*#*/raw_fastq/*_1.fastq.gz").map{ assembly_path ->
         ID = assembly_path.simpleName.split("_1")[0]
     }.set{ existing_id }
 
@@ -32,7 +30,7 @@ workflow IRODS_EXTRACT {
         return [ meta, cram_path ]
     }.set{ branched_meta_cram }
 
-    RETRIEVE_CRAM(branched_meta_cram.absent)
+    RETRIEVE_CRAM(branched_meta_cram.absent.take(1))
     | COLLATE_CRAM
     | FASTQ_FROM_CBAM
 
