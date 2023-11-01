@@ -16,7 +16,7 @@ process COLLATE_CRAM {
     """
 }
 
-process FASTQ_FROM_CBAM {
+process FASTQ_FROM_COLLATED_BAM {
     label 'cpu_2'
     label 'mem_1'
     label 'time_1'

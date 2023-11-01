@@ -1,4 +1,4 @@
-include { COLLATE_CRAM; FASTQ_FROM_CBAM } from '../modules/irods/samtools.nf'
+include { COLLATE_CRAM; FASTQ_FROM_COLLATED_BAM } from '../modules/irods/samtools.nf'
 include { BATON } from '../modules/irods/baton.nf'
 include { JSON_PREP; JSON_PARSE } from '../modules/irods/jq.nf'
 include { RETRIEVE_CRAM } from '../modules/irods/retrieve.nf'
@@ -32,9 +32,9 @@ workflow IRODS_EXTRACT {
 
     RETRIEVE_CRAM(branched_meta_cram.absent.take(1))
     | COLLATE_CRAM
-    | FASTQ_FROM_CBAM
+    | FASTQ_FROM_COLLATED_BAM
 
-    RETRIEVE_CRAM.out.path_channel.join(COLLATE_CRAM.out.bam_channel).join(FASTQ_FROM_CBAM.out.ready_channel).set{ waste_channel }
+    RETRIEVE_CRAM.out.path_channel.join(COLLATE_CRAM.out.bam_channel).join(FASTQ_FROM_COLLATED_BAM.out.ready_channel).set{ waste_channel }
 
     waste_channel.flatten()
             .filter(Path)
@@ -42,5 +42,5 @@ workflow IRODS_EXTRACT {
             .map { it.delete() }
 
     emit:
-    reads_ch = FASTQ_FROM_CBAM.out.fastq_channel
+    reads_ch = FASTQ_FROM_COLLATED_BAM.out.fastq_channel
 }
