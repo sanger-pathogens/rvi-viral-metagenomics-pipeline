@@ -32,7 +32,6 @@ process JSON_PARSE {
     stdout
 
     script:
-    lanes = "lanes_file.txt"
     """
     jq '.result[] | .collection + "/" + .data_object' ${lane_file}
     """
