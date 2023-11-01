@@ -1,19 +1,7 @@
 def VALIDATE_PARAMETERS() {
     // Parameter checking function
     def errors = 0
-
-    if (params.manifest) {
-        manifest=file(params.manifest)
-        if (!manifest.exists()) {
-            log.error("The manifest file specified does not exist.")
-            errors += 1
-        }
-    }
-    else {
-        log.error("No manifest file specified. Please specify one using the --manifest option.")
-        errors += 1
-    }
-
+    
     if (params.results_dir) {
         results_dir_path=file(params.results_dir)
         if (!results_dir_path.getParent().exists()) {
