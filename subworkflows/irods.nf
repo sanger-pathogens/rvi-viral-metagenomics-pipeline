@@ -13,7 +13,7 @@ workflow IRODS_EXTRACT {
     | BATON
     | JSON_PARSE
 
-    JSON_PARSE.out.splitText().map{ cram_path ->
+    JSON_PARSE.out.paths.splitText().map{ cram_path ->
         def meta = [:]
         meta.ID = cram_path.split("/")[-1].split(".cram")[0]
         [ meta, cram_path ]
