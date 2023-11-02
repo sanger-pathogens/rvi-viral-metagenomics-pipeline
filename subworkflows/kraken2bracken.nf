@@ -63,7 +63,7 @@ workflow KRAKEN2BRACKEN{
     // ABUNDANCE ESTIMATION
     //
     kraken2_db_dir = file(params.kraken2bracken_kraken2_db, checkIfExists: true)
-    required_kmer_distrib = file("${kraken2_db_dir}/database${params.kraken2bracken_kmer_len}mers.kmer_distrib")
+    required_kmer_distrib = file("${kraken2_db_dir}/database${params.kraken2bracken_read_len}mers.kmer_distrib")
     if (!required_kmer_distrib.exists()) {
         BRACKEN_BUILD(
             ch_kraken2_db
