@@ -30,15 +30,12 @@ workflow IRODS_EXTRACT {
         return [ meta, cram_path ]
     }.set{ branched_meta_cram }
 
-    RETRIEVE_CRAM(branched_meta_cram.absent.take(1))
+    RETRIEVE_CRAM(branched_meta_cram.absent)
     | COLLATE_CRAM
     | FASTQ_FROM_COLLATED_BAM
 
-    RETRIEVE_CRAM.out.path_channel.join(COLLATE_CRAM.out.bam_channel).join(FASTQ_FROM_COLLATED_BAM.out.ready_channel).set{ waste_channel }
-
-    waste_channel.flatten()
+    FASTQ_FROM_COLLATED_BAM.out.remove_channel.flatten()
             .filter(Path)
-            .view()
             .map { it.delete() }
 
     emit:

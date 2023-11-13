@@ -7,7 +7,7 @@ process COLLATE_CRAM {
     tuple val(meta), path(cram)
 
     output:
-    tuple val(meta), path(bam), emit: bam_channel
+    tuple val(meta), path(bam), path(cram), emit: bam_channel
 
     script:
     bam = "${meta.ID}.bam"
@@ -26,12 +26,12 @@ process FASTQ_FROM_COLLATED_BAM {
     publishDir "${params.results_dir}/${meta.ID}/raw_fastq/", mode: 'copy', overwrite: true, pattern: "*_2.fastq.gz", saveAs: { filename -> "raw_${reverse_fastq}" }
 
     input:
-    tuple val(meta), path(bam)
+    tuple val(meta), path(bam), path(cram)
 
     output:
     tuple val(meta), path(forward_fastq), path(reverse_fastq), emit: fastq_channel
     val(meta), emit: metadata_channel
-    val("ready"), emit: ready_channel
+    tuple path(bam), path(cram), emit: remove_channel
 
     script:
     forward_fastq = "${meta.ID}_1.fastq.gz"
