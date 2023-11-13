@@ -31,7 +31,7 @@ process KMER2READ_DIST {
     tuple path(kraken2_db), path(kraken2_library)
 
     output:
-    path("database${params.kraken2bracken_kmer_len}mers.kraken"),  emit: kmer2read_distr
+    path("database${params.kraken2bracken_read_len}mers.kraken"),  emit: kmer2read_distr
 
     script:
     """
