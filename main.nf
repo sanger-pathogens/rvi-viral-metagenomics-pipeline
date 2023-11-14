@@ -38,7 +38,7 @@ workflow {
     //perform precheck
     VALIDATE_PARAMETERS()
 
-    IRODS_EXTRACT("${params.input_name}")
+    IRODS_EXTRACT("${params.study}")
     | KNEADDATA
     | METASPADES
 

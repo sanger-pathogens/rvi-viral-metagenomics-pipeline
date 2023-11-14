@@ -2,20 +2,20 @@ process JSON_PREP {
     label 'cpu_2_mem_1_time_1'
 
     input:
-    val(input_name)
+    val(study)
 
     output:
     path(json_file), emit: path_channel
 
     script:
     json_file="input.json"
-    if (input_name.isNumber())
+    if (study.isNumber())
         """
-        jq -n '{op: "metaquery", args: {object: true}, target: {avus: [{a: "study_id", v: "${input_name}"}, {a: "target", v: "1"}, {a: "type", v: "cram"}]}}' > ${json_file}
+        jq -n '{op: "metaquery", args: {object: true}, target: {avus: [{a: "study_id", v: "${study}"}, {a: "target", v: "1"}, {a: "type", v: "cram"}]}}' > ${json_file}
         """
-    else if (!input_name.isNumber())
+    else if (!study.isNumber())
         """
-        jq -n '{op: "metaquery", args: {object: true}, target: {avus: [{a: "study", v: "${input_name}"}, {a: "target", v: "1"}, {a: "type", v: "cram"}]}}' > ${json_file}
+        jq -n '{op: "metaquery", args: {object: true}, target: {avus: [{a: "study", v: "${study}"}, {a: "target", v: "1"}, {a: "type", v: "cram"}]}}' > ${json_file}
         """
     else
         error "unrecognised study input"
