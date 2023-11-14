@@ -3,7 +3,7 @@ process GENERATE_ABUNDANCE_SUMMARY {
     label 'mem_1'
     label 'time_1'
 
-    publishDir "${params.results_dir}/abundance_summary", mode: 'copy', overwrite: true
+    publishDir "${params.outdir}/abundance_summary", mode: 'copy', overwrite: true
 
     container 'quay.io/biocontainers/krakentools:1.2--pyh5e36f6f_0'
 

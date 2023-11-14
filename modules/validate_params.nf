@@ -2,9 +2,9 @@ def VALIDATE_PARAMETERS() {
     // Parameter checking function
     def errors = 0
     
-    if (params.results_dir) {
-        results_dir_path=file(params.results_dir)
-        if (!results_dir_path.getParent().exists()) {
+    if (params.outdir) {
+        outdir_path=file(params.outdir)
+        if (!outdir_path.getParent().exists()) {
             log.error("The results directory path specified does not exist.")
             errors += 1
         }

@@ -26,7 +26,7 @@ process JSON_PARSE {
     label 'mem_1'
     label 'time_1'
 
-    publishDir "${params.results_dir}/", mode: 'copy', overwrite: true, pattern: "irods_paths.json"
+    publishDir "${params.outdir}/", mode: 'copy', overwrite: true, pattern: "irods_paths.json"
 
     input:
     path(lane_file)
