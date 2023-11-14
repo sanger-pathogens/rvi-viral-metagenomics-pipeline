@@ -1,5 +1,5 @@
 process RETRIEVE_CRAM {
-    label 'cpu_2'
+    label 'cpu_1'
     label 'mem_1'
     label 'time_1'
     input:

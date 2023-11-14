@@ -1,5 +1,7 @@
 process JSON_PREP {
-    label 'cpu_2_mem_1_time_1'
+    label 'cpu_1'
+    label 'mem_1'
+    label 'time_1'
 
     input:
     val(study)
@@ -22,7 +24,7 @@ process JSON_PREP {
 }
 
 process JSON_PARSE {
-    label 'cpu_2'
+    label 'cpu_1'
     label 'mem_1'
     label 'time_1'
 
