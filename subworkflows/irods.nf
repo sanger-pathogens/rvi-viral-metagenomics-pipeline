@@ -19,7 +19,7 @@ workflow IRODS_EXTRACT {
         [ meta, cram_path ]
     }.set{ meta_cram_ch }
 
-    Channel.fromPath("${params.results_dir}/*#*/raw_fastq/*_1.fastq.gz").map{ raw_fastq_path ->
+    Channel.fromPath("${params.outdir}/*#*/raw_fastq/*_1.fastq.gz").map{ raw_fastq_path ->
         ID = raw_fastq_path.simpleName.split("_1")[0]
     }.set{ existing_id }
 

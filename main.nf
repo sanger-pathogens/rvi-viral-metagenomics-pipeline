@@ -21,11 +21,12 @@ include { IRODS_EXTRACT    } from './subworkflows/irods.nf'
 def printHelp() {
     log.info """
     Usage:
-    nextflow run . --manifest <path to manifest> --reference <path to reference>
+    nextflow run main.nf
 
     Options:
-      --manifest                   Manifest containing paths to fastq files (mandatory)
-      --help                       print this help message (optional)
+      --study                      Study name or study ID to run through pipeline (mandatory)
+      --outdir                     Specify output directory [default: ./results] (optional)
+      --help                       Print this help message (optional)
     """.stripIndent()
 }
 
@@ -38,7 +39,7 @@ workflow {
     //perform precheck
     VALIDATE_PARAMETERS()
 
-    IRODS_EXTRACT("${params.input_name}")
+    IRODS_EXTRACT("${params.study}")
     | KNEADDATA
     | METASPADES
 

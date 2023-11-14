@@ -5,9 +5,9 @@ process INSTRAIN {
 
     container '/software/pathogen/images/instrain-1.6.4-c2.simg'
 
-    if (params.instrain_full_output_abundance_estimation) { publishDir path: "${params.results_dir}/${sample_id}/", mode: 'copy', overwrite: true, pattern: "*_instrain_output" }
-    if (params.instrain_quick_profile_abundance_estimation) { publishDir path: "${params.results_dir}/${sample_id}/", mode: 'copy', overwrite: true, pattern: "*_instrain_quick_profile_output" }
-    publishDir "${params.results_dir}/${sample_id}/", mode: 'copy', overwrite: true, pattern: '*.tsv'
+    if (params.instrain_full_output_abundance_estimation) { publishDir path: "${params.outdir}/${sample_id}/", mode: 'copy', overwrite: true, pattern: "*_instrain_output" }
+    if (params.instrain_quick_profile_abundance_estimation) { publishDir path: "${params.outdir}/${sample_id}/", mode: 'copy', overwrite: true, pattern: "*_instrain_quick_profile_output" }
+    publishDir "${params.outdir}/${sample_id}/", mode: 'copy', overwrite: true, pattern: '*.tsv'
     
     input:
     tuple val(sample_id), path(sorted_bam), path(stb_file), path(genome_file)
