@@ -22,7 +22,7 @@ process KNEADDATA {
     output_unmatched_1 = "${meta.ID}_1_kneaddata_unmatched_1.fastq"
     output_unmatched_2 = "${meta.ID}_1_kneaddata_unmatched_2.fastq"
     """
-    kneaddata -t ${params.kneaddata_threads} -p 2 -i1 ${R1} -i2 ${R2} -db ${params.off_target_db} --output . --sequencer-source ${params.sequencer_source} \
+    kneaddata -t ${task.cpus} -p 2 -i1 ${R1} -i2 ${R2} -db ${params.off_target_db} --output . --sequencer-source ${params.sequencer_source} \
     --trimmomatic-options "${params.trimmomatic_options}"
     """
 }  
