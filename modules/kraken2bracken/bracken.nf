@@ -50,7 +50,7 @@ process GENERATE_KMER_DISTRIBUTION {
     label 'mem_8'
     label 'time_12'
 
-    publishDir "${params.results_dir}/bracken_build", mode: 'copy', overwrite: true, pattern: "*.kmer_distrib"
+    publishDir "${params.outdir}/bracken_build", mode: 'copy', overwrite: true, pattern: "*.kmer_distrib"
 
     container 'quay.io/biocontainers/bracken:2.8--py310h0dbaff4_1'
 
@@ -73,7 +73,7 @@ process BRACKEN {
     label 'mem_1'
     label 'time_1'
 
-    publishDir "${params.results_dir}/${meta.id}/bracken", mode: 'copy', overwrite: true
+    publishDir "${params.outdir}/${meta.id}/bracken", mode: 'copy', overwrite: true
 
     container 'quay.io/biocontainers/bracken:2.8--py310h0dbaff4_1'
 
