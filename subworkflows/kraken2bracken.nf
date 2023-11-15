@@ -13,11 +13,6 @@ include { KRAKEN2; KRAKEN2_GET_CLASSIFIED; COMPRESS_READS } from '../modules/kra
 include { BRACKEN } from '../modules/kraken2bracken/bracken'
 include { GENERATE_ABUNDANCE_SUMMARY } from '../modules/kraken2bracken/krakentools'
 
-//
-// SUBWORKFLOWS
-//
-include { BRACKEN_BUILD } from './bracken_build'
-
 /*
 ========================================================================================
     RUN MAIN WORKFLOW
@@ -63,14 +58,11 @@ workflow KRAKEN2BRACKEN{
     // ABUNDANCE ESTIMATION
     //
     kraken2_db_dir = file(params.kraken2bracken_kraken2_db, checkIfExists: true)
+    // Assume a pre-built bracken database file has been generated from the given kraken2 database and moved into this database directory
     required_kmer_distrib = file("${kraken2_db_dir}/database${params.kraken2bracken_read_len}mers.kmer_distrib")
     if (!required_kmer_distrib.exists()) {
-        BRACKEN_BUILD(
-            ch_kraken2_db
-        )
-        BRACKEN_BUILD.out.ch_kmer_distrib
-            .dump(tag: 'kmer_distrib')
-            .set { ch_kmer_distrib }
+        log.error("The required bracken kmer distribution database file cannot be found in the kraken database directory ${kraken2_db_dir}")
+        exit 1
     } else {
         Channel.fromPath(required_kmer_distrib)
             .dump(tag: 'kmer_distrib')
