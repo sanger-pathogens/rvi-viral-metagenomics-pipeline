@@ -6,9 +6,8 @@ process KNEADDATA {
 
     container '/software/pathogen/images/kneaddata-0.12.0.simg'
 
-    publishDir enabled: params.publish_trimmed_reads, mode: 'copy', pattern: "${output_1}", path: "${params.results_dir}/${meta.ID}/trimmed_reads/"
-    publishDir enabled: params.publish_trimmed_reads, mode: 'copy', pattern: "${output_2}", path: "${params.results_dir}/${meta.ID}/trimmed_reads/"
-
+    publishDir enabled: params.publish_trimmed_reads, mode: 'copy', pattern: "${output_1}", path: "${params.outdir}/${meta.ID}/trimmed_reads/"
+    publishDir enabled: params.publish_trimmed_reads, mode: 'copy', pattern: "${output_2}", path: "${params.outdir}/${meta.ID}/trimmed_reads/"
 
     input:
     tuple val(meta), path(R1), path(R2)
