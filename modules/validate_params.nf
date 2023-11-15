@@ -1,4 +1,13 @@
 // General helper functions
+def validate_mandatory_param(
+    param_option, 
+    param) {
+        if (param == null) {
+            log.error("Parameter '${param_option}' is mandatory, but was not given")
+            return 1
+        }
+}
+
 def validate_path_param(
     param_option, 
     param, 
@@ -71,6 +80,7 @@ def validate_kraken2_db_param(param_option, param) {
 def validate_parameters() {
     def errors = 0
 
+    errors += validate_mandatory_param("--study", params.study)
     errors += validate_kraken2_db_param("--kraken2bracken_kraken2_db", params.kraken2bracken_kraken2_db)
     errors += validate_number_param("--kraken2bracken_read_len", params.kraken2bracken_read_len)
     errors += validate_number_param("--kraken2bracken_kmer_len", params.kraken2bracken_kmer_len)
