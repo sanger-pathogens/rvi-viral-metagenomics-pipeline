@@ -36,8 +36,7 @@ workflow {
         exit 0
     }
 
-    //perform precheck
-    VALIDATE_PARAMETERS()
+    validate_parameters()
 
     IRODS_EXTRACT("${params.study}")
     | KNEADDATA
