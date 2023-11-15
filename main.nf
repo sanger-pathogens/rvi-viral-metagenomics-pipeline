@@ -1,10 +1,11 @@
 #!/usr/bin/env nextflow
 
+// GROOVY HELPERS
+include { validate_parameters } from './modules/validate_params.nf'
+
 //
 // MODULES
 //
-
-include { VALIDATE_PARAMETERS  } from './modules/validate_params.nf'
 include { KNEADDATA            } from "./modules/kneaddata.nf"
 include { METASPADES           } from "./modules/metaspades.nf"
 
