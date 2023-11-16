@@ -1,0 +1,7 @@
+work/*
+.nextflow/*
+.nf-test/*
+.nextflow.log*
+manifest.csv
+nextflow_results/
+results/
