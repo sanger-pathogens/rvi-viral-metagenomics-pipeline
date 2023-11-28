@@ -25,7 +25,8 @@ def printHelp() {
     nextflow run main.nf
 
     Options:
-      --study                      Study name or study ID to run through pipeline (mandatory)
+      --study                      Name or ID of sequencing study including read data to use as pipeline input (mandatory)
+      --runid                      ID of sequencing run including read data to use as pipeline input (mandatory)
       --outdir                     Specify output directory [default: ./results] (optional)
       --help                       Print this help message (optional)
     """.stripIndent()
@@ -39,7 +40,7 @@ workflow {
 
     validate_parameters()
 
-    IRODS_EXTRACT("${params.study}")
+    IRODS_EXTRACT("${params.study}", ${params.runid})
     | KNEADDATA
     | METASPADES
 

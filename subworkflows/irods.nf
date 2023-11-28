@@ -6,7 +6,7 @@ include { RETRIEVE_CRAM } from '../modules/irods/retrieve.nf'
 workflow IRODS_EXTRACT {
     
     take:
-    input_path //assumes for ease of development it is a study name
+    tuple study, runid
 
     main:
     JSON_PREP(input_path)
