@@ -40,7 +40,7 @@ workflow {
 
     validate_parameters()
 
-    Channel.of("${params.study}", ${params.runid}).set{ input_irods_ch } 
+    Channel.of([params.study, params.runid]).set{ input_irods_ch } 
 
     IRODS_EXTRACT(input_irods_ch)
     | KNEADDATA
