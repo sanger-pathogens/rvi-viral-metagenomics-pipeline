@@ -21,7 +21,7 @@ workflow IRODS_EXTRACT {
 
     Channel.fromPath("${params.outdir}/*#*/raw_fastq/*_1.fastq.gz").map{ raw_fastq_path ->
         ID = raw_fastq_path.simpleName.split("_1")[0]
-    }.set{ existing_id }
+    }.ifEmpty("fresh_run").set{ existing_id }
 
     meta_cram_ch.combine( existing_id | collect | map{ [it] })
     | filter { meta, cram_path, existing -> !(meta.ID in existing)}
