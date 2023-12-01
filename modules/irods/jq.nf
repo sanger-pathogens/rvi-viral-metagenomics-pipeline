@@ -11,9 +11,19 @@ process JSON_PREP {
 
     script:
     json_file="input.json"
-    """
-    jq -n '{op: "metaquery", args: {object: true}, target: {avus: [{a: "study_id", v: "${study}"}, {a: "id_run", v: "${runid}"}, {a: "target", v: "1"}, {a: "type", v: "cram"}]}}' > ${json_file}
-    """
+    if (params.laneid < 0) {
+        """
+        jq -n '{op: "metaquery", args: {object: true}, target: {avus: [{a: "study_id", v: "${study}"}, {a: "id_run", v: "${runid}"}, {a: "target", v: "1"}, {a: "type", v: "cram"}]}}' > ${json_file}
+        """
+    } else { if (params.plexid < 0) {
+        """
+        jq -n '{op: "metaquery", args: {object: true}, target: {avus: [{a: "study_id", v: "${study}"}, {a: "id_run", v: "${runid}"}, {a: "lane", v: "${laneid}"}, {a: "target", v: "1"}, {a: "type", v: "cram"}]}}' > ${json_file}
+        """
+    } else {
+        """
+        jq -n '{op: "metaquery", args: {object: true}, target: {avus: [{a: "study_id", v: "${study}"}, {a: "id_run", v: "${runid}"}, {a: "lane", v: "${laneid}"}, {a: "tag_index", v: "${plexid}"}, {a: "target", v: "1"}, {a: "type", v: "cram"}]}}' > ${json_file}
+        """
+    }}
 }
 
 process JSON_PARSE {
