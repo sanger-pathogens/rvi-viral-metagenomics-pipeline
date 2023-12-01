@@ -24,10 +24,50 @@ def printHelp() {
     Usage:
     nextflow run main.nf
 
-    Options:
+    Input parameters:
       --study                      Name or ID of sequencing study including read data to use as pipeline input (mandatory)
       --runid                      ID of sequencing run including read data to use as pipeline input (mandatory)
+
+    Output parameters
       --outdir                     Specify output directory [default: ./results] (optional)
+      --publish_raw_reads          Should raw .fastq files (freshly converted from iRODS-downloaded .cram files) be saved? [default: false] (optional)
+      --publish_trimmed_reads      Should Kneaddata-filtered .fastq files be saved? [default: true] (optional)
+
+    General options:
+      --help                       Print summary of main parameters and options (optional)
+      --help_all                   Print extensive list of parameters and options (optional)
+    """.stripIndent()
+}
+
+def printHelpAll() {
+    printHelp()
+    log.info """
+
+    Procesing options:
+     Kraken2/Bracken options:
+      --off_target_db = "/data/pam/software/RVI_DB/homo_sapiens"
+     Kneaddata options:
+      --sequencer_source = "NexteraPE"
+      --trimmomatic_options = "ILLUMINACLIP:/data/pam/software/trimmomatic/adapter_fasta/solexa-with-nextseqPR-adapters.fasta:2:10:7:1 CROP:151 SLIDINGWINDOW:4:20 MINLEN:100"
+      --kneaddata_threads = 4
+     Abundance estimation (inStrain) options:
+      --skip_qc_abundance_estimation = true
+      --genome_dir_abundance_estimation = "/data/pam/team162/shared/gtdb_genomes_reps_r207/gtdb_genomes_reps_r207_genome_dir"
+      --sourmash_db_abundance_estimation = "/data/pam/team162/shared/sourmash_db/gtdb-rs207.genomic-reps.dna.k31.zip"
+      --bowtie2_samtools_threads_abundance_estimation = 4
+      --instrain_threads_abundance_estimation = 4
+      --instrain_full_output_abundance_estimation = false
+      --instrain_quick_profile_abundance_estimation = false
+      --cleanup_intermediate_files_abundance_estimation = true
+      --instrain_quick_profile_abundance_estimation = false
+      --bowtie2_samtools_only_abundance_estimation = false
+      --bmtagger_db_abundance_estimation = "/data/pam/software/BMTAGGER_INDEX"
+      --bmtagger_host_abundance_estimation = "T2T-CHM13v2.0"
+      --publish_host_reads_abundance_estimation = false
+                                   Should host reads detected by metaWRAP QC (as a prior step to Abundance estimation/inStrain subworkflow) be saved? [default: false] (optional)
+                                   NB: there shouldn't be much or any such reads due to prior filtering with Kneaddata.
+    
+    General options:
       --help                       Print this help message (optional)
     """.stripIndent()
 }
@@ -35,6 +75,10 @@ def printHelp() {
 workflow {
     if (params.help) {
         printHelp()
+        exit 0
+    }
+    if (params.help_all) {
+        printHelpAll()
         exit 0
     }
 
