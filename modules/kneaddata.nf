@@ -6,8 +6,8 @@ process KNEADDATA {
 
     container '/software/pathogen/images/kneaddata-0.12.0.simg'
 
-    publishDir enabled: params.publish_trimmed_reads, mode: 'copy', pattern: "${output_1}", path: "${params.outdir}/${meta.ID}/trimmed_reads/"
-    publishDir enabled: params.publish_trimmed_reads, mode: 'copy', pattern: "${output_2}", path: "${params.outdir}/${meta.ID}/trimmed_reads/"
+    publishDir enabled: params.publish_trimmed_reads, mode: 'copy', pattern: "${output_1}.gz", path: "${params.outdir}/${meta.ID}/trimmed_reads/"
+    publishDir enabled: params.publish_trimmed_reads, mode: 'copy', pattern: "${output_2}.gz", path: "${params.outdir}/${meta.ID}/trimmed_reads/"
 
     input:
     tuple val(meta), path(R1), path(R2)
@@ -23,5 +23,7 @@ process KNEADDATA {
     """
     kneaddata -t ${task.cpus} -p 2 -i1 ${R1} -i2 ${R2} -db ${params.off_target_db} --output . --sequencer-source ${params.sequencer_source} \
     --trimmomatic-options "${params.trimmomatic_options}"
+    gzip ${output_1}
+    gzip ${output_2}
     """
 }  
