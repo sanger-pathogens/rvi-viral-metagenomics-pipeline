@@ -27,6 +27,11 @@ def printHelp() {
     Input parameters:
       --study                      Name or ID of sequencing study including read data to use as pipeline input (mandatory)
       --runid                      ID of sequencing run including read data to use as pipeline input (mandatory)
+      --laneid                     ID of sequencing lane (as in a lane within of a flow cell) including read data to use as pipeline input (mandatory)
+      --plexid                     ID of sequencing lane multiplex tag index including read data to use as pipeline input (mandatory)
+
+      NB: the real lane id is different from the the so-called \"lane\" id, a term commonly used in Sanger referring to this sequencing run output unit, usually labelled with this syntax: 48106_1#83.
+      In this, the run id is 48106, the (real) lane id is 1 and the plex id is 83.
 
     Output parameters
       --outdir                     Specify output directory [default: ./results] (optional)
@@ -66,9 +71,6 @@ def printHelpAll() {
       --publish_host_reads_abundance_estimation = false
                                    Should host reads detected by metaWRAP QC (as a prior step to Abundance estimation/inStrain subworkflow) be saved? [default: false] (optional)
                                    NB: there shouldn't be much or any such reads due to prior filtering with Kneaddata.
-    
-    General options:
-      --help                       Print this help message (optional)
     """.stripIndent()
 }
 
@@ -84,7 +86,7 @@ workflow {
 
     validate_parameters()
 
-    Channel.of([params.study, params.runid]).set{ input_irods_ch } 
+    Channel.of([params.study, params.runid, params.laneid, params.plexid]).set{ input_irods_ch } 
 
     IRODS_EXTRACT(input_irods_ch)
     | KNEADDATA

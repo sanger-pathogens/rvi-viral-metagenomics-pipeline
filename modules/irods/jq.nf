@@ -4,18 +4,22 @@ process JSON_PREP {
     label 'time_1'
 
     input:
-    tuple val(study), val(runid)
+    tuple val(study), val(runid), val(laneid), val(plexid)
 
     output:
     path(json_file), emit: path_channel
 
     script:
     json_file="input.json"
-    if (params.laneid < 0) {
+    if (runid < 0) {
+        """
+        jq -n '{op: "metaquery", args: {object: true}, target: {avus: [{a: "study_id", v: "${study}"}, {a: "target", v: "1"}, {a: "type", v: "cram"}]}}' > ${json_file}
+        """
+    } else { if (laneid < 0) {
         """
         jq -n '{op: "metaquery", args: {object: true}, target: {avus: [{a: "study_id", v: "${study}"}, {a: "id_run", v: "${runid}"}, {a: "target", v: "1"}, {a: "type", v: "cram"}]}}' > ${json_file}
         """
-    } else { if (params.plexid < 0) {
+    } else { if (plexid < 0) {
         """
         jq -n '{op: "metaquery", args: {object: true}, target: {avus: [{a: "study_id", v: "${study}"}, {a: "id_run", v: "${runid}"}, {a: "lane", v: "${laneid}"}, {a: "target", v: "1"}, {a: "type", v: "cram"}]}}' > ${json_file}
         """
@@ -23,7 +27,7 @@ process JSON_PREP {
         """
         jq -n '{op: "metaquery", args: {object: true}, target: {avus: [{a: "study_id", v: "${study}"}, {a: "id_run", v: "${runid}"}, {a: "lane", v: "${laneid}"}, {a: "tag_index", v: "${plexid}"}, {a: "target", v: "1"}, {a: "type", v: "cram"}]}}' > ${json_file}
         """
-    }}
+    }}}
 }
 
 process JSON_PARSE {
