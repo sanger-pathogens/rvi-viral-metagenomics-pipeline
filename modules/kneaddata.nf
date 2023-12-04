@@ -23,7 +23,7 @@ process KNEADDATA {
     """
     kneaddata -t ${task.cpus} -p 2 -i1 ${R1} -i2 ${R2} -db ${params.off_target_db} --output . --sequencer-source ${params.sequencer_source} \
     --trimmomatic-options "${params.trimmomatic_options}"
-    gzip ${output_1}
-    gzip ${output_2}
+    gzip -c ${output_1} > ${output_1}.gz
+    gzip -c ${output_2} > ${output_2}.gz
     """
 }  
