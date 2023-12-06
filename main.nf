@@ -57,6 +57,8 @@ def printHelpAll() {
       --sequencer_source = "NexteraPE"
       --trimmomatic_options = "ILLUMINACLIP:/data/pam/software/trimmomatic/adapter_fasta/solexa-with-nextseqPR-adapters.fasta:2:10:7:1 CROP:151 SLIDINGWINDOW:4:20 MINLEN:100"
       --kneaddata_threads = 4
+     MetaSPAdes options:
+      --metaspades_base_mem_gb = 16
      Abundance estimation (inStrain) options:
       --skip_qc_abundance_estimation = true
       --genome_dir_abundance_estimation = "/data/pam/team162/shared/gtdb_genomes_reps_r207/gtdb_genomes_reps_r207_genome_dir"
