@@ -49,6 +49,8 @@ def printHelpAll() {
     log.info """
 
     Procesing options:
+     iRODS extractor options:
+      --cleanup_intermediate_files_irods_extractor = false
      Kraken2/Bracken options:
       --off_target_db = "/data/pam/software/RVI_DB/homo_sapiens"
      Kneaddata options:

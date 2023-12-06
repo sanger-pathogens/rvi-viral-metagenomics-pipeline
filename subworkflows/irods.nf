@@ -6,7 +6,7 @@ include { RETRIEVE_CRAM } from '../modules/irods/retrieve.nf'
 workflow IRODS_EXTRACT {
     
     take:
-    input_irods_ch //tuple study, runid
+    input_irods_ch //tuple study, runid, laneid, plexid
 
     main:
     JSON_PREP(input_irods_ch)
@@ -33,10 +33,11 @@ workflow IRODS_EXTRACT {
     | COLLATE_CRAM
     | FASTQ_FROM_COLLATED_BAM
 
-    FASTQ_FROM_COLLATED_BAM.out.remove_channel.flatten()
-            .filter(Path)
-            .map { it.delete() }
-
+    if (params.cleanup_intermediate_files_irods_extractor){
+        FASTQ_FROM_COLLATED_BAM.out.remove_channel.flatten()
+                .filter(Path)
+                .map { it.delete() }
+    }
     emit:
     reads_ch = FASTQ_FROM_COLLATED_BAM.out.fastq_channel
 }
