@@ -1,7 +1,7 @@
 process METASPADES {
     tag "${meta.ID}"
     label 'cpu_16'
-    label 'mem_16'
+    label "mem_${params.metaspades_base_mem_gb}"
     label 'time_12'
 
     container '/software/pathogen/images/spades-3.15.5--h95f258a_1.simg'
