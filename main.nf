@@ -25,7 +25,7 @@ def printHelp() {
     nextflow run main.nf
 
     Options:
-      --study                      Name or ID of sequencing study including read data to use as pipeline input (mandatory)
+      --study                      ID of sequencing study including read data to use as pipeline input (mandatory)
       --runid                      ID of sequencing run including read data to use as pipeline input (mandatory)
       --outdir                     Specify output directory [default: ./results] (optional)
       --help                       Print this help message (optional)
