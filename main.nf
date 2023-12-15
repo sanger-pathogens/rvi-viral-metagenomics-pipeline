@@ -24,8 +24,8 @@ def printHelp() {
     Usage:
     nextflow run main.nf
 
-    Input parameters:
-      --study                      Name or ID of sequencing study including read data to use as pipeline input (mandatory)
+    Options:
+      --study                      ID of sequencing study including read data to use as pipeline input (mandatory)
       --runid                      ID of sequencing run including read data to use as pipeline input (mandatory)
       --laneid                     ID of sequencing lane (as in a lane within of a flow cell) including read data to use as pipeline input (mandatory)
       --plexid                     ID of sequencing lane multiplex tag index including read data to use as pipeline input (mandatory)

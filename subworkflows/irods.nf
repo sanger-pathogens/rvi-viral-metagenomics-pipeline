@@ -24,8 +24,9 @@ workflow IRODS_EXTRACT {
         ID = trimmed_reads_path.simpleName.split("_1")[0]
     }.ifEmpty("fresh_run").set{ existing_id }
 
-    meta_cram_ch.combine( existing_id | collect | map{ [it] })
-    | filter { meta, cram_path, existing -> !(meta.ID in existing)}
+    meta_cram_ch
+    | combine( existing_id | collect | map{ [it] } )
+    | filter { meta, cram_path, existing -> !(meta.ID in existing) }
     | map { it[0,1] }
     | set{ do_not_exist }
 
