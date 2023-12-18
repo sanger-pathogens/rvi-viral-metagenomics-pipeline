@@ -4,23 +4,16 @@ process JSON_PREP {
     label 'time_1'
 
     input:
-    val(study)
+    tuple val(study), val(runid)
 
     output:
     path(json_file), emit: path_channel
 
     script:
     json_file="input.json"
-    if (study.isNumber())
-        """
-        jq -n '{op: "metaquery", args: {object: true}, target: {avus: [{a: "study_id", v: "${study}"}, {a: "target", v: "1"}, {a: "type", v: "cram"}]}}' > ${json_file}
-        """
-    else if (!study.isNumber())
-        """
-        jq -n '{op: "metaquery", args: {object: true}, target: {avus: [{a: "study", v: "${study}"}, {a: "target", v: "1"}, {a: "type", v: "cram"}]}}' > ${json_file}
-        """
-    else
-        error "unrecognised study input"
+    """
+    jq -n '{op: "metaquery", args: {object: true}, target: {avus: [{a: "study_id", v: "${study}"}, {a: "id_run", v: "${runid}"}, {a: "target", v: "1"}, {a: "type", v: "cram"}]}}' > ${json_file}
+    """
 }
 
 process JSON_PARSE {
