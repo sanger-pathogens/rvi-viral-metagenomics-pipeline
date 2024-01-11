@@ -25,7 +25,7 @@ def printHelp() {
     nextflow run main.nf
 
     Options:
-      --study                      ID of sequencing study including read data to use as pipeline input (mandatory)
+      --studyid                    ID of sequencing study including read data to use as pipeline input (mandatory)
       --runid                      ID of sequencing run including read data to use as pipeline input (mandatory)
       --laneid                     ID of sequencing lane (as in a lane within of a flow cell) including read data to use as pipeline input (mandatory)
       --plexid                     ID of sequencing lane multiplex tag index including read data to use as pipeline input (mandatory)
@@ -90,7 +90,7 @@ workflow {
 
     validate_parameters()
 
-    Channel.of([params.study, params.runid, params.laneid, params.plexid]).set{ input_irods_ch } 
+    Channel.of([params.studyid, params.runid, params.laneid, params.plexid]).set{ input_irods_ch } 
 
     IRODS_EXTRACT(input_irods_ch)
     | KNEADDATA
