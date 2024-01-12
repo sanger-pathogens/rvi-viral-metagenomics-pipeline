@@ -1,4 +1,4 @@
-include { IRODS_QUERY, CRAM_EXTRACT      } from '../assorted_subworkflows/irods_extractor/subworkflows/irods.nf'
+include { IRODS_QUERY; CRAM_EXTRACT      } from '../assorted_subworkflows/irods_extractor/subworkflows/irods.nf'
 
 workflow CHECK_EXISTS_IRODS_EXTRACT {
     
