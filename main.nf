@@ -92,7 +92,7 @@ workflow {
 
     Channel.of([params.studyid, params.runid, params.laneid, params.plexid]).set{ input_irods_ch } 
 
-    IRODS_EXTRACTOR(input_irods_ch)
+    CHECK_EXISTS_IRODS_EXTRACT(input_irods_ch)
     | KNEADDATA
     | METASPADES
 
