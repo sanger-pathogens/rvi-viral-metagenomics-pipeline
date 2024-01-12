@@ -13,10 +13,10 @@ include { METASPADES           } from "./modules/metaspades.nf"
 //
 // SUBWORKFLOWS
 //
-include { INPUT_CHECK    } from './subworkflows/input_check.nf'
-include { ABUNDANCE_ESTIMATION   } from './subworkflows/abundance_estimation.nf'
-include { KRAKEN2BRACKEN         } from './subworkflows/kraken2bracken.nf'
-include { IRODS_EXTRACT    } from './subworkflows/irods.nf'
+include { INPUT_CHECK          } from './subworkflows/input_check.nf'
+include { ABUNDANCE_ESTIMATION } from './subworkflows/abundance_estimation.nf'
+include { KRAKEN2BRACKEN       } from './subworkflows/kraken2bracken.nf'
+include { IRODS_EXTRACTOR      } from './assorted_subworkflows/irods_extractor/subworkflows/irods.nf'
 
 
 def printHelp() {
@@ -92,7 +92,7 @@ workflow {
 
     Channel.of([params.studyid, params.runid, params.laneid, params.plexid]).set{ input_irods_ch } 
 
-    IRODS_EXTRACT(input_irods_ch)
+    IRODS_EXTRACTOR(input_irods_ch)
     | KNEADDATA
     | METASPADES
 
