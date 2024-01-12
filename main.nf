@@ -1,22 +1,22 @@
 #!/usr/bin/env nextflow
 
 // GROOVY HELPERS
-include { validate_parameters } from './modules/validate_params.nf'
+include { validate_parameters         } from './modules/validate_params.nf'
 
 //
 // MODULES
 //
-include { KNEADDATA            } from "./modules/kneaddata.nf"
-include { METASPADES           } from "./modules/metaspades.nf"
+include { KNEADDATA                   } from "./modules/kneaddata.nf"
+include { METASPADES                  } from "./modules/metaspades.nf"
 
 
 //
 // SUBWORKFLOWS
 //
-include { INPUT_CHECK          } from './subworkflows/input_check.nf'
-include { ABUNDANCE_ESTIMATION } from './subworkflows/abundance_estimation.nf'
-include { KRAKEN2BRACKEN       } from './subworkflows/kraken2bracken.nf'
-include { IRODS_EXTRACTOR      } from './assorted_subworkflows/irods_extractor/subworkflows/irods.nf'
+include { INPUT_CHECK                 } from './subworkflows/input_check.nf'
+include { ABUNDANCE_ESTIMATION        } from './subworkflows/abundance_estimation.nf'
+include { KRAKEN2BRACKEN              } from './subworkflows/kraken2bracken.nf'
+include { CHECK_EXISTS_IRODS_EXTRACT  } from './subworkflows/check_exists_irods_extract.nf'
 
 
 def printHelp() {
