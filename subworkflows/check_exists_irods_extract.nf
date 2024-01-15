@@ -18,6 +18,6 @@ workflow CHECK_EXISTS_IRODS_EXTRACT {
     CRAM_EXTRACT(meta_cram_ch)
 
     emit:
-    reads_ch = CRAM_EXTRACT.out.fastq_channel
+    reads_ch = CRAM_EXTRACT.out.reads_ch
 }
 
