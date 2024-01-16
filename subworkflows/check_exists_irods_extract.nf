@@ -3,7 +3,7 @@ include { IRODS_QUERY; CRAM_EXTRACT      } from '../assorted-sub-workflows/irods
 workflow CHECK_EXISTS_IRODS_EXTRACT {
     
     take:
-    input_irods_ch //tuple study, runid, laneid, plexid
+    input_irods_ch //tuple studyid, runid, laneid, plexid
 
     main:
     IRODS_QUERY(input_irods_ch)

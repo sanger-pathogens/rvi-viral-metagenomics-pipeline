@@ -17,7 +17,7 @@ include { INPUT_CHECK                 } from './subworkflows/input_check.nf'
 include { ABUNDANCE_ESTIMATION        } from './subworkflows/abundance_estimation.nf'
 include { KRAKEN2BRACKEN              } from './subworkflows/kraken2bracken.nf'
 include { CHECK_EXISTS_IRODS_EXTRACT  } from './subworkflows/check_exists_irods_extract.nf'
-
+include { COMBINE_IRODS               } from './subworkflows/combined_input.nf
 
 def printHelp() {
     log.info """
@@ -90,9 +90,9 @@ workflow {
 
     validate_parameters()
 
-    Channel.of([params.studyid, params.runid, params.laneid, params.plexid]).set{ input_irods_ch } 
-
-    CHECK_EXISTS_IRODS_EXTRACT(input_irods_ch)
+    COMBINE_IRODS()
+  
+    CHECK_EXISTS_IRODS_EXTRACT(COMBINE_IRODS.out.input_irods_ch)
     | KNEADDATA
     | METASPADES
 
