@@ -90,12 +90,11 @@ workflow {
 
     validate_parameters()
 
-    COMBINE_IRODS()
-  
-    CHECK_EXISTS_IRODS_EXTRACT(COMBINE_IRODS.out.input_irods_ch)
+    COMBINE_IRODS
+    | CHECK_EXISTS_IRODS_EXTRACT
+    | COMBINE_READS
     | KNEADDATA
     | METASPADES
-
 
     KNEADDATA.out.paired_channel.map{ meta, R1 , R2 -> 
         sample_id = meta.ID
