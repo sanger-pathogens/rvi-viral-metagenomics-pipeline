@@ -1,8 +1,8 @@
 process KNEADDATA {
     tag "${meta.ID}"
-    label 'cpu_4'
     label 'mem_4'
     label 'time_12'
+    cpus { task.attempt > 1 ? 1 : params.kneaddata_threads }
 
     container '/software/pathogen/images/kneaddata-0.12.0.simg'
 
