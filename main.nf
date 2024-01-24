@@ -16,8 +16,8 @@ include { METASPADES                  } from "./modules/metaspades.nf"
 include { INPUT_CHECK                 } from './subworkflows/input_check.nf'
 include { ABUNDANCE_ESTIMATION        } from './subworkflows/abundance_estimation.nf'
 include { KRAKEN2BRACKEN              } from './subworkflows/kraken2bracken.nf'
-include { CHECK_EXISTS_IRODS_EXTRACT  } from './subworkflows/check_exists_irods_extract.nf'
 include { COMBINE_IRODS ; 
+          IRODS_EXTRACTOR ;
           COMBINE_READS               } from './assorted-sub-workflows/combined_input/subworkflows/combined_input.nf'
 
 def printHelp() {
@@ -92,7 +92,7 @@ workflow {
     validate_parameters()
 
     COMBINE_IRODS
-    | CHECK_EXISTS_IRODS_EXTRACT
+    | IRODS_EXTRACTOR
     | COMBINE_READS
     | KNEADDATA
     | METASPADES
