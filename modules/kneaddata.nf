@@ -14,6 +14,7 @@ process KNEADDATA {
 
     output:
     tuple val(meta), path(output_1), path(output_2), emit: paired_channel
+    tuple val(meta), path("${output_1}.gz"), path("${output_2}.gz")
 
     script:
     output_1 = "${meta.ID}_1_kneaddata_paired_1.fastq"
