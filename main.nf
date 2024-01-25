@@ -95,8 +95,10 @@ workflow {
     | IRODS_EXTRACTOR
     | COMBINE_READS
     | KNEADDATA
-    | METASPADES
 
+    METASPADES(KNEADDATA.out.paired_channel)
+
+    // TO DO: need to normalise the use of [meta, read_1, read_2] channel to avoid all ht below conversions
     KNEADDATA.out.paired_channel.map{ meta, R1 , R2 -> 
         sample_id = meta.ID
         [sample_id, R1, R2 ]
