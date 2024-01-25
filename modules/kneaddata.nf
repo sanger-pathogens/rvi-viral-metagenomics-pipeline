@@ -6,19 +6,21 @@ process KNEADDATA {
 
     container '/software/pathogen/images/kneaddata-0.12.0.simg'
 
-    publishDir enabled: params.publish_trimmed_reads, mode: 'copy', pattern: "${output_1}.gz", path: "${params.outdir}/${meta.ID}/trimmed_reads/"
-    publishDir enabled: params.publish_trimmed_reads, mode: 'copy', pattern: "${output_2}.gz", path: "${params.outdir}/${meta.ID}/trimmed_reads/"
+    publishDir enabled: params.publish_trimmed_reads, mode: 'copy', pattern: "${output_2_gz}", path: "${params.outdir}/${meta.ID}/trimmed_reads/"
+    publishDir enabled: params.publish_trimmed_reads, mode: 'copy', pattern: "${output_2_gz}", path: "${params.outdir}/${meta.ID}/trimmed_reads/"
 
     input:
     tuple val(meta), path(R1), path(R2)
 
     output:
     tuple val(meta), path(output_1), path(output_2), emit: paired_channel
-    tuple val(meta), path("${output_1}.gz"), path("${output_2}.gz")
+    tuple val(meta), path(output_1_gz), path(output_2_gz)
 
     script:
     output_1 = "${meta.ID}_1_kneaddata_paired_1.fastq"
     output_2 = "${meta.ID}_1_kneaddata_paired_2.fastq"
+    output_1_gz = "${output_1}.gz"
+    output_2_gz = "${output_2}.gz"
     output_unmatched_1 = "${meta.ID}_1_kneaddata_unmatched_1.fastq"
     output_unmatched_2 = "${meta.ID}_1_kneaddata_unmatched_2.fastq"
     """
