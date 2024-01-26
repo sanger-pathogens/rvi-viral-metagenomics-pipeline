@@ -79,7 +79,7 @@ def validate_kraken2_db_param(param_option, param) {
 
 def validate_parameters() {
     def errors = 0
-    errors += validate_number_param("--study", params.study)
+    errors += validate_number_param("--studyid", params.studyid)
     errors += validate_number_param("--runid", params.runid)
     errors += validate_number_param("--laneid", params.laneid)
     errors += validate_number_param("--plexid", params.plexid)

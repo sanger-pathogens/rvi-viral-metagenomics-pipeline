@@ -1,23 +1,24 @@
 #!/usr/bin/env nextflow
 
 // GROOVY HELPERS
-include { validate_parameters } from './modules/validate_params.nf'
+include { validate_parameters         } from './modules/validate_params.nf'
 
 //
 // MODULES
 //
-include { KNEADDATA            } from "./modules/kneaddata.nf"
-include { METASPADES           } from "./modules/metaspades.nf"
+include { KNEADDATA                   } from "./modules/kneaddata.nf"
+include { METASPADES                  } from "./modules/metaspades.nf"
 
 
 //
 // SUBWORKFLOWS
 //
-include { INPUT_CHECK    } from './subworkflows/input_check.nf'
-include { ABUNDANCE_ESTIMATION   } from './subworkflows/abundance_estimation.nf'
-include { KRAKEN2BRACKEN         } from './subworkflows/kraken2bracken.nf'
-include { IRODS_EXTRACT    } from './subworkflows/irods.nf'
-
+include { INPUT_CHECK                 } from './subworkflows/input_check.nf'
+include { ABUNDANCE_ESTIMATION        } from './subworkflows/abundance_estimation.nf'
+include { KRAKEN2BRACKEN              } from './subworkflows/kraken2bracken.nf'
+include { COMBINE_IRODS ; 
+          COMBINE_READS               } from './assorted-sub-workflows/combined_input/subworkflows/combined_input.nf'
+include { IRODS_EXTRACTOR             } from './assorted-sub-workflows/irods_extractor/subworkflows/irods.nf'
 
 def printHelp() {
     log.info """
@@ -25,7 +26,7 @@ def printHelp() {
     nextflow run main.nf
 
     Options:
-      --study                      ID of sequencing study including read data to use as pipeline input (mandatory)
+      --studyid                    ID of sequencing study including read data to use as pipeline input (mandatory)
       --runid                      ID of sequencing run including read data to use as pipeline input (mandatory)
       --laneid                     ID of sequencing lane (as in a lane within of a flow cell) including read data to use as pipeline input (mandatory)
       --plexid                     ID of sequencing lane multiplex tag index including read data to use as pipeline input (mandatory)
@@ -90,13 +91,14 @@ workflow {
 
     validate_parameters()
 
-    Channel.of([params.study, params.runid, params.laneid, params.plexid]).set{ input_irods_ch } 
-
-    IRODS_EXTRACT(input_irods_ch)
+    COMBINE_IRODS
+    | IRODS_EXTRACTOR
+    | COMBINE_READS
     | KNEADDATA
-    | METASPADES
 
+    METASPADES(KNEADDATA.out.paired_channel)
 
+    // TO DO: need to normalise the use of [meta, read_1, read_2] channel to avoid all ht below conversions
     KNEADDATA.out.paired_channel.map{ meta, R1 , R2 -> 
         sample_id = meta.ID
         [sample_id, R1, R2 ]
