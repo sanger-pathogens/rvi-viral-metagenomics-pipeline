@@ -3,7 +3,7 @@ process KREPORT2MPA {
     label 'mem_1'
     label 'time_1'
 
-    publishDir "${params.outdir}/${meta.id}/bracken", mode: 'copy', overwrite: true, pattern: "*.mpa.txt"
+    publishDir "${params.outdir}/${meta.ID}/bracken", mode: 'copy', overwrite: true, pattern: "*.mpa.txt"
 
 
     container 'quay.io/biocontainers/krakentools:1.2--pyh5e36f6f_0'
@@ -12,7 +12,7 @@ process KREPORT2MPA {
     tuple val(meta), path(kraken_style_bracken_report)
 
     output:
-    tuple val(meta), path(${mpa_out}),  emit: mpa_abundance_report
+    tuple val(meta), path("${mpa_out}"),  emit: mpa_abundance_report
 
     script:
     mpa_out = "${meta.ID}_report_bracken_species.mpa.txt"

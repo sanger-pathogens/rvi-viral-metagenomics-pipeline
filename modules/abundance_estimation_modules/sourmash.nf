@@ -1,5 +1,5 @@
 process SOURMASH_SKETCH {
-    tag "${sample_id}"
+    tag "${meta.ID}"
     label 'cpu_1'
     label 'mem_1'
     label 'time_queue_from_normal'
@@ -7,20 +7,20 @@ process SOURMASH_SKETCH {
     container '/software/pathogen/images/sourmash-4.5.0--hdfd78af_0.simg'
 
     input:
-    tuple val(sample_id), path(merged_fastq)
+    tuple val(meta), path(merged_fastq)
 
     output:
-    tuple val(sample_id), path(sourmash_sketch), emit: sketch
+    tuple val(meta), path(sourmash_sketch), emit: sketch
 
     script:
-    sourmash_sketch="${sample_id}_sourmash_sketch"
+    sourmash_sketch="${meta.ID}_sourmash_sketch"
     """
-    sourmash sketch dna -p scaled=10000,k=31 ${merged_fastq} -o ${sample_id}_sourmash_sketch
+    sourmash sketch dna -p scaled=10000,k=31 ${merged_fastq} -o ${meta.ID}_sourmash_sketch
     """
 }
 
 process SOURMASH_GATHER {
-    tag "${sample_id}"
+    tag "${meta.ID}"
     label 'cpu_1'
     label 'mem_4'
     label 'time_queue_from_normal'
@@ -28,16 +28,16 @@ process SOURMASH_GATHER {
     container '/software/pathogen/images/sourmash-4.5.0--hdfd78af_0.simg'
 
     input:
-    tuple val(sample_id), path(sourmash_sketch)
+    tuple val(meta), path(sourmash_sketch)
 
     output:
-    tuple val(sample_id), path(sourmash_genomes), emit: sourmash_genomes
+    tuple val(meta), path(sourmash_genomes), emit: sourmash_genomes
 
     script:
-    sourmash_genomes="${sample_id}_sourmash_genomes.txt"
+    sourmash_genomes="${meta.ID}_sourmash_genomes.txt"
     """
     sourmash gather --dna ${sourmash_sketch} ${params.sourmash_db_abundance_estimation} -o sourmash.out
     # get species names out of sourmash output
-    tail -n +2 sourmash.out | awk -F "," '{ print \$10 }' | sed 's|[][]||g' | sed 's|"||g' | awk '{ print \$1 }' > ${sample_id}_sourmash_genomes.txt
+    tail -n +2 sourmash.out | awk -F "," '{ print \$10 }' | sed 's|[][]||g' | sed 's|"||g' | awk '{ print \$1 }' > ${meta.ID}_sourmash_genomes.txt
     """
 }

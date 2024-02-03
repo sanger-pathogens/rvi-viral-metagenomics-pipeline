@@ -21,7 +21,7 @@ process CLEANUP_TRIMMED_FASTQ_FILES {
     */
 
     input:
-        tuple val(sample_id), path(first_read), path(second_read)
+        tuple val(meta), path(first_read), path(second_read)
 
     script:
         """
@@ -39,12 +39,12 @@ process CLEANUP_INSTRAIN_OUTPUT {
 
     input:
          path(workdir)
-         val(sample_id)
+         val(meta)
     script:
         """
         # Remove instrain results
         instrain_dir=\$(cat $workdir)
         cd \$instrain_dir
-        rm -rf $sample_id*
+        rm -rf ${meta.ID}*
         """
 }
