@@ -11,7 +11,7 @@
 //
 include { KRAKEN2; KRAKEN2_GET_CLASSIFIED; COMPRESS_READS } from '../modules/kraken2bracken/kraken2'
 include { BRACKEN } from '../modules/kraken2bracken/bracken'
-include { GENERATE_ABUNDANCE_SUMMARY } from '../modules/kraken2bracken/krakentools'
+include { KREPORT2MPA; GENERATE_ABUNDANCE_SUMMARY } from '../modules/kraken2bracken/krakentools'
 
 /*
 ========================================================================================
