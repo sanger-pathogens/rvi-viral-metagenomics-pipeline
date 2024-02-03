@@ -38,8 +38,8 @@ process CLEANUP_INSTRAIN_OUTPUT {
     */
 
     input:
-         path(workdir)
-         val(meta)
+         tuple val(meta), path(workdir)
+         
     script:
         """
         # Remove instrain results
