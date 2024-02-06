@@ -106,6 +106,6 @@ workflow ABUNDANCE_ESTIMATION{
     }
 
     if (params.cleanup_intermediate_files_abundance_estimation && !params.bowtie2_samtools_only_abundance_estimation) {
-        CLEANUP_INSTRAIN_OUTPUT(INSTRAIN.out.workdir, INSTRAIN.out.sample_id)
+        CLEANUP_INSTRAIN_OUTPUT(INSTRAIN.out.meta_workdir)
     }
 }

@@ -11,7 +11,7 @@
 //
 include { KRAKEN2; KRAKEN2_GET_CLASSIFIED; COMPRESS_READS } from '../modules/kraken2bracken/kraken2'
 include { BRACKEN } from '../modules/kraken2bracken/bracken'
-include { GENERATE_ABUNDANCE_SUMMARY } from '../modules/kraken2bracken/krakentools'
+include { KREPORT2MPA; GENERATE_ABUNDANCE_SUMMARY } from '../modules/kraken2bracken/krakentools'
 
 /*
 ========================================================================================
@@ -77,16 +77,18 @@ workflow KRAKEN2BRACKEN{
         ch_kraken2_report_and_kmer_distrib
     )
 
+    KREPORT2MPA(BRACKEN.out.kraken_style_bracken_report)
+
     //
     // SUMMARISE ABUNDANCE
     //
-    BRACKEN.out.kraken_style_bracken_report
+    KREPORT2MPA.out.mpa_abundance_report
         .map { meta, report -> report }
         .collect()
-        .dump(tag: 'kraken2_style_bracken_reports')
-        .set { ch_kraken2_style_bracken_reports }
+        .dump(tag: 'mpa_abundance_reports')
+        .set { ch_mpa_abundance_reports }
     GENERATE_ABUNDANCE_SUMMARY(
-        ch_kraken2_style_bracken_reports
+        ch_mpa_abundance_reports
     )
 }
 

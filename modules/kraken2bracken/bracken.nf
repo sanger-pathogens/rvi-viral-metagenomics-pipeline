@@ -1,10 +1,10 @@
 process BRACKEN {
-    tag "${meta.id}"
+    tag "${meta.ID}"
     label 'cpu_1'
     label 'mem_1'
     label 'time_1'
 
-    publishDir "${params.outdir}/${meta.id}/bracken", mode: 'copy', overwrite: true
+    publishDir "${params.outdir}/${meta.ID}/bracken", mode: 'copy', overwrite: true
 
     container 'quay.io/biocontainers/bracken:2.8--py310h0dbaff4_1'
 
@@ -20,7 +20,7 @@ process BRACKEN {
     """
     /usr/local/bin/src/est_abundance.py -i ${kraken2_sample_report} \
                                         -k ${kmer_distrib} \
-                                        -o ${meta.id}.bracken \
+                                        -o ${meta.ID}.bracken \
                                         -l ${params.kraken2bracken_classification_level} \
                                         -t ${params.kraken2bracken_threshold}
     """

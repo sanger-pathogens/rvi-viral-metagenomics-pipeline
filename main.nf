@@ -95,24 +95,10 @@ workflow {
     | IRODS_EXTRACTOR
     | COMBINE_READS
     | KNEADDATA
-
+    
     METASPADES(KNEADDATA.out.paired_channel)
 
-    // TO DO: need to normalise the use of [meta, read_1, read_2] channel to avoid all ht below conversions
-    KNEADDATA.out.paired_channel.map{ meta, R1 , R2 -> 
-        sample_id = meta.ID
-        [sample_id, R1, R2 ]
-    }.set{ meta_removed_channel }
+    ABUNDANCE_ESTIMATION(KNEADDATA.out.paired_channel)
 
-    ABUNDANCE_ESTIMATION(meta_removed_channel)
-
-    KNEADDATA.out.paired_channel.map{ meta, R1 , R2 -> 
-        meta_new = [:]
-        meta_new.id = meta.ID
-        reads = tuple(R1, R2)
-        [meta_new, reads ]
-    }.set{ combined_reads_channel }
-
-
-    KRAKEN2BRACKEN(combined_reads_channel)
+    KRAKEN2BRACKEN(KNEADDATA.out.paired_channel)
 }
