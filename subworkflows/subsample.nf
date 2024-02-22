@@ -6,6 +6,7 @@ workflow SUBSAMPLE_ITER {
     take:
     paired_channel // tuple val(meta), path(read_1), path(read_2)
 
+    main:
     //if number of reads is above subsample limit put to a channel branch into a channel for subsampling
     //if below limit branch into a seperate channel where no subsampling is done and instead skips the step
     paired_channel.branch{ meta, read_1, read_2 ->
@@ -19,7 +20,7 @@ workflow SUBSAMPLE_ITER {
             return tuple ( meta, read_1, read_2 )
     }.set{ subsampling_check }
 
-    def iteration_seed = seed_list()
+    iteration_seed = seed_list()
 
     SUBSAMPLE_SEQTK(subsampling_check.needs_subsampling, iteration_seed)
 
