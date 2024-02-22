@@ -10,8 +10,8 @@ workflow SUBSAMPLE_ITER {
     //reads the length of read_1 file (will be paired as output from trimmomatic) and divides by 4 to give number of reads. 
     //if number of reads is above subsample limit put to a channel branch into a channel for subsampling
     //if below limit branch into a seperate channel where no subsampling is done and instead skips the step
-    TRIM_READS.out.paired_channel.branch{ meta, read_1, read_2, read_1_file_length ->
-        def read_count = read_1_file_length.toInteger() / 4
+    TRIM_READS.out.paired_channel.branch{ meta, read_1, read_2 ->
+        def read_count = read_1.countFastq()
         meta_new = [:]
         meta_new = meta
         meta_new.total_reads = read_count
