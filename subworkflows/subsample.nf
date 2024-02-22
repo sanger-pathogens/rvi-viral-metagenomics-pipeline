@@ -16,15 +16,15 @@ workflow SUBSAMPLE_ITER {
         needs_subsampling: meta_new.total_reads > params.subsample_limit
             return tuple ( meta, read_1, read_2 )
         already_below_subsample: true
-            return tuple ( meta, read_1, read_2)
+            return tuple ( meta, read_1, read_2 )
     }.set{ subsampling_check }
 
-    iteration_seed = seed_list()
+    def iteration_seed = seed_list()
 
     SUBSAMPLE_SEQTK(subsampling_check.needs_subsampling, iteration_seed)
 
     //map to add _iteration_ before mix into ID so non-subsampled do not have iterations
-    SUBSAMPLE_SEQTK.out.read_ch.map{meta, read_1 , read_2 , seed, iteration ->
+    SUBSAMPLE_SEQTK.out.read_ch.map{ meta, read_1 , read_2 , seed, iteration ->
         meta_new = [:]
         meta_new.ID = "${meta.ID}_iteration_${iteration}"
         [meta_new, read_1, read_2]
