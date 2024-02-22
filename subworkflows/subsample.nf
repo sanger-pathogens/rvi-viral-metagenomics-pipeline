@@ -8,13 +8,13 @@ workflow SUBSAMPLE_ITER {
 
     //if number of reads is above subsample limit put to a channel branch into a channel for subsampling
     //if below limit branch into a seperate channel where no subsampling is done and instead skips the step
-    TRIM_READS.out.paired_channel.branch{ meta, read_1, read_2 ->
+    paired_channel.branch{ meta, read_1, read_2 ->
         def read_count = read_1.countFastq()
         meta_new = [:]
         meta_new = meta
         meta_new.total_reads = read_count
         needs_subsampling: meta_new.total_reads > params.subsample_limit
-            return tuple( meta, read_1, read_2 )
+            return tuple ( meta, read_1, read_2 )
         already_below_subsample: true
             return tuple ( meta, read_1, read_2)
     }.set{ subsampling_check }
