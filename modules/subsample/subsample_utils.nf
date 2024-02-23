@@ -3,6 +3,6 @@
 //multiple iterations of subsampling
 def seed_list() {
     seqtk_seed = []
-    seqtk_seed = (params.subsample_seed .. params.subsample_iterations+params.subsample_seed).each{ it }
+    seqtk_seed = (params.subsample_seed .. params.subsample_iterations + params.subsample_seed - 1).each{ it }
     return seqtk_seed.toList()
 }
