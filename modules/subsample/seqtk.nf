@@ -4,7 +4,7 @@ process SUBSAMPLE_SEQTK {
     label 'mem_500M'
     label 'time_1'
 
-    publishDir "${params.outdir}/${meta.ID}_iteration_${iteration}", mode: 'copy', overwrite: true, pattern: "*log.txt"
+    publishDir "${params.outdir}/${meta.ID}/subsampled_iteration_${iteration}", mode: 'copy', overwrite: true, pattern: "*log.txt"
 
     container '/software/pathogen/images/seqtk-1.3--ha92aebf_0.simg'
 
