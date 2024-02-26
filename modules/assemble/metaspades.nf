@@ -19,7 +19,7 @@ process METASPADES {
     script:
     splitmeta = "${meta.ID}".split("_subsampled-")
     basemetaID = "${splitmeta[0]}"
-    metaspadesoutdir = "${ splitmeta.size() > 1 ? "metaspades" : "metaspades_subsampled-${splitmeta[1]}" }"
+    metaspadesoutdir = "${ splitmeta.size() > 1 ? "metaspades_subsampled-${splitmeta[1]}" : "metaspades" }"
     """
     metaspades.py -1 ${R1} -2 ${R2} -o . --tmp-dir tmp/
     """
