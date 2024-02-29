@@ -7,7 +7,7 @@ include { validate_parameters         } from './modules/validate_params.nf'
 // MODULES
 //
 include { KNEADDATA                   } from "./modules/kneaddata.nf"
-include { METASPADES                  } from "./modules/metaspades.nf"
+include { ASSEMBLE_META               } from "./subworkflows/assemble.nf"
 
 
 //
@@ -96,7 +96,7 @@ workflow {
     | COMBINE_READS
     | KNEADDATA
     
-    METASPADES(KNEADDATA.out.paired_channel)
+    ASSEMBLE_META(KNEADDATA.out.paired_channel)
 
     ABUNDANCE_ESTIMATION(KNEADDATA.out.paired_channel)
 

@@ -44,7 +44,8 @@ process BOWTIE2SAMTOOLS {
 }
 
 process GET_OVERALL_MAPPING_RATE {
-    publishDir "${params.outdir}", mode: 'copy', overwrite: true, pattern: 'mapping_rates.csv'
+    
+    publishDir "${params.results_dir}/mapping_rates/", mode: 'copy', overwrite: true, pattern: 'mapping_rates.csv', saveAs: { filename -> "${workflow.start}_mapping_rates.csv" }
     
     input:
     path(mapping_rate)
