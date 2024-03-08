@@ -24,13 +24,13 @@ process INSTRAIN {
     workdir="workdir.txt"
     """
     pwd > workdir.txt
-    if $params.instrain_quick_profile_abundance_estimation
+    if ${params.instrain_quick_profile_abundance_estimation}
     then
-        inStrain quick_profile $sorted_bam $genome_file -o ${meta.ID}_instrain_quick_profile_output -p ${task.cpus} -s $stb_file
+        inStrain quick_profile ${sorted_bam} ${genome_file} -o ${meta.ID}_instrain_quick_profile_output -p ${task.cpus} -s $stb_file
     else
-        inStrain profile $sorted_bam $genome_file -o ${meta.ID}_instrain_output -p ${task.cpus} -s $stb_file --database_mode --skip_plot_generation
+        inStrain profile ${sorted_bam} ${genome_file} -o ${meta.ID}_instrain_output -p ${task.cpus} -s $stb_file --skip_plot_generation ${params.instrain_profile_options}
     fi
-    if ! $params.instrain_full_output_abundance_estimation && ! $params.instrain_quick_profile_abundance_estimation
+    if ! ${params.instrain_full_output_abundance_estimation} && ! ${params.instrain_quick_profile_abundance_estimation}
     then
         mv ${meta.ID}_instrain_output/output/${meta.ID}"_instrain_output_genome_info.tsv" ./${meta.ID}"_genome_info.tsv"
     fi
