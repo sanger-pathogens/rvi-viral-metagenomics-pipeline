@@ -13,17 +13,19 @@ process TRIMMOMATIC {
     tuple val(meta), path(extracted_R1), path(extracted_R2)
 
     output:
-    tuple val(meta), path(output1), path(output2), emit: paired_channel
+    tuple val(meta), path(output_1), path(output_2), emit: paired_channel
 
     script:\
-    output1="${meta.ID}_trimmed_1.fastq"
-    output2="${meta.ID}_trimmed_2.fastq"
-    output1_unpaired="${meta.ID}_trimmed_unpaired_1.fastq"
-    output2_unpaired="${meta.ID}_trimmed_unpaired_2.fastq"
+    output_1="${meta.ID}_trimmed_1.fastq"
+    output_2="${meta.ID}_trimmed_2.fastq"
+    output_1_gz = "${output_1}.gz"
+    output_2_gz = "${output_2}.gz"
+    output_1_unpaired="${meta.ID}_trimmed_unpaired_1.fastq"
+    output_2_unpaired="${meta.ID}_trimmed_unpaired_2.fastq"
     """
     trimmomatic PE -phred33 -threads ${params.trimmomatic_threads} ${extracted_R1} ${extracted_R2} \
-    ${output1} ${output1_unpaired} \
-    ${output2} ${output2_unpaired} \
+    ${output_1} ${output_1_unpaired} \
+    ${output_2} ${output_2_unpaired} \
     ${params.trimmomatic_options}
     gzip -c ${output_1} > ${output_1}.gz
     gzip -c ${output_2} > ${output_2}.gz
