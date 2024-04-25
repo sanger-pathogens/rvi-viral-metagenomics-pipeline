@@ -6,6 +6,7 @@ workflow PREPROCESSING {
     take:
     paired_channel 
 
+    main:
     if (params.human_read_removal){
         KNEADDATA(paired_channel)
         KNEADDATA.out.set{final_read_channel}
