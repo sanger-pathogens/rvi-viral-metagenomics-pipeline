@@ -1,5 +1,5 @@
-include { KNEADDATA                   } from "./modules/preprocessing/kneaddata.nf"
-include { TRIMMOMATIC                 } from "./modules/preprocessing/trimmomatic.nf"
+include { KNEADDATA                   } from "../modules/preprocessing/kneaddata.nf"
+include { TRIMMOMATIC                 } from "../modules/preprocessing/trimmomatic.nf"
 
 workflow PREPROCESSING {
 
