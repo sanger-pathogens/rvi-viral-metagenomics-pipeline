@@ -4,17 +4,17 @@ include { TRIMMOMATIC                 } from "./modules/preprocessing/trimmomati
 workflow PREPROCESSING {
 
     take:
-    paired_channel 
+    paired_reads_channel 
 
     main:
     if (params.human_read_removal){
-        KNEADDATA(paired_channel)
-        KNEADDATA.out.set{final_read_channel}
+        KNEADDATA(paired_reads_channel)
+        KNEADDATA.out.set{paired_channel}
     } else{
-        TRIMMOMATIC(paired_channel)
-        TRIMMOMATIC.out.set{final_read_channel}
+        TRIMMOMATIC(paired_reads_channel)
+        TRIMMOMATIC.out.set{paired_channel}
     }
 
     emit:
-    final_read_channel
+    paired_channel
 }

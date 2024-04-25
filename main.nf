@@ -88,11 +88,11 @@ workflow {
     COMBINE_IRODS
     | IRODS_EXTRACTOR
     | COMBINE_READS
-    | KNEADDATA
+    | PREPROCESSING
     
-    ASSEMBLE_META(KNEADDATA.out.paired_channel)
+    ASSEMBLE_META(PREPROCESSING.out.paired_channel)
 
-    ABUNDANCE_ESTIMATION(KNEADDATA.out.paired_channel)
+    ABUNDANCE_ESTIMATION(PREPROCESSING.out.paired_channel)
 
-    KRAKEN2BRACKEN(KNEADDATA.out.paired_channel)
+    KRAKEN2BRACKEN(PREPROCESSING.out.paired_channel)
 }
