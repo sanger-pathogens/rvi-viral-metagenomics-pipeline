@@ -2,7 +2,7 @@ process TRIMMOMATIC {
     tag "${meta.ID}"
     label 'mem_1'
     label 'time_1'
-    cpus params.kneaddata_threads
+    cpus params.trimmomatic_threads
 
     container '/software/pathogen/images/trimmomatic-0.39--1.simg'
 
