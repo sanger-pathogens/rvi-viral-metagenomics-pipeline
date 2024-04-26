@@ -8,11 +8,6 @@
             }
         }
     },
-    "Kraken2/Bracken options": {
-        "kraken2bracken_kraken2_db": {
-            "default": "/data/pam/software/kraken2/viral_kraken/"
-        }
-    },
     "Pre-processing options": {
         "sequencer_source": {
             "default": "NexteraPE"
@@ -35,6 +30,59 @@
             "default": 4
         }
     },
+    "Kraken2/Bracken options": {
+        "kraken2bracken_kraken2_db": {
+            "default": "/data/pam/software/kraken2/viral_kraken/"
+        }
+    },
+    "MetaSPAdes options": {
+        "metaspades_base_mem_gb": {
+            "default": 16,
+            "help_text": "memmory in GB from which the METASPADES process will start iterating, doubling at every retry when failed for insufficient memory"
+        }
+    },
+    "Abundance estimation (inStrain) options": {
+        "skip_qc_abundance_estimation": {
+            "default": true
+        },
+        "genome_dir_abundance_estimation": {
+			"default": "/data/pam/team162/shared/gtdb_genomes_reps_r207/gtdb_genomes_reps_r207_genome_dir"
+        },
+		"sourmash_db_abundance_estimation": {
+			"default": "/data/pam/team162/shared/sourmash_db/gtdb-rs207.genomic-reps.dna.k31.zip"
+        },
+		"bowtie2_samtools_threads_abundance_estimation": {
+			"default": 4
+        },
+		"instrain_threads_abundance_estimation": {
+			"default": 4
+        },
+		"instrain_full_output_abundance_estimation": {
+			"default": false
+        },
+		"instrain_quick_profile_abundance_estimation": {
+			"default": false
+        },
+		"cleanup_intermediate_files_abundance_estimation": {
+			"default": true
+        },
+		"instrain_quick_profile_abundance_estimation": {
+			"default": false
+        },
+		"bowtie2_samtools_only_abundance_estimation": {
+			"default": false
+        },
+		"bmtagger_db_abundance_estimation": {
+			"default": "/data/pam/software/BMTAGGER_INDEX"
+        },
+		"bmtagger_host_abundance_estimation": {
+			"default": "T2T-CHM13v2.0"
+        },
+		"publish_host_reads_abundance_estimation": {
+			"default": false,
+            "help_text": "Should host reads detected by metaWRAP QC (as a prior step to Abundance estimation/inStrain subworkflow) be saved? [default: false] (optional)\n                               NB: there shouldn't be much or any such reads when filtering upstream with Kneaddata (with `--human_read_removal true`)."
+        }
+    },
     "overwrite_param": {
         "cleanup_intermediate_files_irods_extractor": {
             "default": "true",
@@ -51,26 +99,3 @@
     }
 }
 
-
-// Kneaddata options:
-//  --sequencer_source = "NexteraPE"
-//  --trimmomatic_options = "ILLUMINACLIP:/data/pam/software/trimmomatic/adapter_fasta/solexa-with-nextseqPR-adapters.fasta:2:10:7:1 CROP:151 SLIDINGWINDOW:4:20 MINLEN:100"
-//  --kneaddata_threads = 4
-// MetaSPAdes options:
-//  --metaspades_base_mem_gb = 16
-// Abundance estimation (inStrain) options:
-//  --skip_qc_abundance_estimation = true
-//  --genome_dir_abundance_estimation = "/data/pam/team162/shared/gtdb_genomes_reps_r207/gtdb_genomes_reps_r207_genome_dir"
-//  --sourmash_db_abundance_estimation = "/data/pam/team162/shared/sourmash_db/gtdb-rs207.genomic-reps.dna.k31.zip"
-//  --bowtie2_samtools_threads_abundance_estimation = 4
-//  --instrain_threads_abundance_estimation = 4
-//  --instrain_full_output_abundance_estimation = false
-//  --instrain_quick_profile_abundance_estimation = false
-//  --cleanup_intermediate_files_abundance_estimation = true
-//  --instrain_quick_profile_abundance_estimation = false
-//  --bowtie2_samtools_only_abundance_estimation = false
-//  --bmtagger_db_abundance_estimation = "/data/pam/software/BMTAGGER_INDEX"
-//  --bmtagger_host_abundance_estimation = "T2T-CHM13v2.0"
-//  --publish_host_reads_abundance_estimation = false
-//                               Should host reads detected by metaWRAP QC (as a prior step to Abundance estimation/inStrain subworkflow) be saved? [default: false] (optional)
-//                               NB: there shouldn't be much or any such reads due to prior filtering with Kneaddata.
