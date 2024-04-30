@@ -16,7 +16,7 @@ process TRIMMOMATIC {
     tuple val(meta), path(output_1), path(output_2), emit: paired_channel
     tuple val(meta), path(output_1_gz), path(output_2_gz)
 
-    script:\
+    script:
     output_1="${meta.ID}_trimmed_1.fastq"
     output_2="${meta.ID}_trimmed_2.fastq"
     output_1_gz = "${output_1}.gz"
