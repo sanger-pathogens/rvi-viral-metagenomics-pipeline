@@ -63,12 +63,6 @@
 		"instrain_quick_profile_abundance_estimation": {
 			"default": false
         },
-		"cleanup_intermediate_files_abundance_estimation": {
-			"default": true
-        },
-		"instrain_quick_profile_abundance_estimation": {
-			"default": false
-        },
 		"bowtie2_samtools_only_abundance_estimation": {
 			"default": false
         },
@@ -81,6 +75,9 @@
 		"publish_host_reads_abundance_estimation": {
 			"default": false,
             "help_text": "Should host reads detected by metaWRAP QC (as a prior step to Abundance estimation/inStrain subworkflow) be saved? [default: false] (optional)\n                               NB: there shouldn't be much or any such reads when filtering upstream with Kneaddata (with `--human_read_removal true`)."
+        },
+		"cleanup_intermediate_files_abundance_estimation": {
+			"default": true
         }
     },
     "overwrite_param": {
