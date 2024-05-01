@@ -21,3 +21,4 @@ process PARSE_KD_LOG {
     """
     python3 count_reads_in_kd_log.py *_1_kneaddata.log ${output_txt}
     """
+}
