@@ -1,8 +1,8 @@
-include { TRIMGALORE } from '../modules/abundance_estimation_modules/metawrap_qc/trimgalore.nf'
-include { BMTAGGER } from '../modules/abundance_estimation_modules/metawrap_qc/bmtagger.nf'
-include { FILTER_HOST_READS; GET_HOST_READS } from '../modules/abundance_estimation_modules/metawrap_qc/filter_reads.nf'
-include { GENERATE_STATS } from '../modules/abundance_estimation_modules/metawrap_qc/generate_stats.nf'
-include { COLLATE_STATS } from '../modules/abundance_estimation_modules/metawrap_qc/collate_stats.nf'
+include { TRIMGALORE } from '../modules/abundance_estimation/metawrap_qc/trimgalore.nf'
+include { BMTAGGER } from '../modules/abundance_estimation/metawrap_qc/bmtagger.nf'
+include { FILTER_HOST_READS; GET_HOST_READS } from '../modules/abundance_estimation/metawrap_qc/filter_reads.nf'
+include { GENERATE_STATS } from '../modules/abundance_estimation/metawrap_qc/generate_stats.nf'
+include { COLLATE_STATS } from '../modules/abundance_estimation/metawrap_qc/collate_stats.nf'
 
 
 workflow METAWRAP_QC {
