@@ -3,7 +3,7 @@
     "params": {
         "Abundance estimation (inStrain) options": {
             "abundance_estimation_subheader_1": {
-                "subtext": "*  Workflow step skippping/enabling options:"
+                "subtext": "\n  * Workflow step skippping/enabling options:"
             },
             "skip_qc_abundance_estimation": {
                 "default": true,
@@ -22,7 +22,7 @@
                 "help_text": "Should possibly large and numerous intermediate files from the ABUNDANCE_ESTIMATION workflow be removed on the fly from the work/ folder? (prevents use of the -resume functionality for this workflow)"
             },
             "abundance_estimation_subheader_2": {
-                "subtext": "\n*  Output control options:"
+                "subtext": "\n  * Output control options:"
             },
             "instrain_full_output_abundance_estimation": {
                 "default": false,
@@ -33,7 +33,7 @@
                 "help_text": "Should host reads detected by metaWRAP QC (as a prior step to ABUNDANCE_ESTIMATION:INSTRAIN subworkflow) be saved? [default: false] (optional)                               NB: there shouldn't be much or any such reads when filtering upstream with Kneaddata (with `--human_read_removal true`)."
             },
             "abundance_estimation_subheader_3": {
-                "subtext": "\n*  Reference data file options for Sourmash/Bowtie2/inStrain:"
+                "subtext": "\n  * Reference data file options for Sourmash/Bowtie2/inStrain:"
             },
             "genome_dir_abundance_estimation": {
                 "default": "/data/pam/team162/shared/gtdb_genomes_reps_r207/gtdb_genomes_reps_r207_genome_dir",
@@ -56,7 +56,7 @@
                 "help_text": ""
             },
             "abundance_estimation_subheader_4": {
-                "subtext": "\n*  Reference data file options for metaWRAP QC:"
+                "subtext": "\n  * Reference data file options for metaWRAP QC:"
             },
             "bmtagger_db_abundance_estimation": {
                 "default": "/data/pam/software/BMTAGGER_INDEX",
@@ -67,7 +67,7 @@
                 "help_text": "BMTAGGER database for off-target read removal (as part of the ABUNDANCE_ESTIMATION:METAWRAP_QC subworkflow); default to human genome assembly T2T-CHM13v2.0"
             },
             "abundance_estimation_subheader_5": {
-                "subtext": "\n*  Runtime parameter options:"
+                "subtext": "\n  * Runtime parameter options:"
             },
             "bowtie2_samtools_threads_abundance_estimation": {
                 "default": 4
