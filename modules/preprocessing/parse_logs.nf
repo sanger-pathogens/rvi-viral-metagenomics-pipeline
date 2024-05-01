@@ -10,7 +10,7 @@ process PARSE_KD_LOG {
     publishDir enabled: params.publish_trimmed_reads, mode: 'copy', pattern: "${output_2_gz}", path: "${params.outdir}/${meta.ID}/trimmed_reads/"
 
     input:
-    tuple path(kd_logs)
+    path(kd_logs)
 
     output:
     tuple val(meta), path(output_1), path(output_2), emit: paired_channel
