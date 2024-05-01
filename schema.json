@@ -42,13 +42,17 @@
         },
         "Abundance estimation (inStrain) options": {
             "skip_qc_abundance_estimation": {
-                "default": true
+                "default": true,
+                "help_text": "Skip or enable read data clean-up including off-target (default: human host contaminant) read removal with metaWRAP QC as a prior step to ABUNDANCE_ESTIMATION:INSTRAIN subworkflow? [default: true i.e. skip]\n                                NB: this off-target/host-contamination removal step is mostly redundant with upstream filtering with Kneaddata (when setting `--human_read_removal true`)."
+
             },
             "genome_dir_abundance_estimation": {
-                "default": "/data/pam/team162/shared/gtdb_genomes_reps_r207/gtdb_genomes_reps_r207_genome_dir"
+                "default": "/data/pam/team162/shared/gtdb_genomes_reps_r207/gtdb_genomes_reps_r207_genome_dir",
+                "help_text": "folder of reference genome database for read mapping with Bowtie2 as a prior step to ABUNDANCE_ESTIMATION:INSTRAIN subworkflow"
             },
             "sourmash_db_abundance_estimation": {
-                "default": "/data/pam/team162/shared/sourmash_db/gtdb-rs207.genomic-reps.dna.k31.zip"
+                "default": "/data/pam/team162/shared/sourmash_db/gtdb-rs207.genomic-reps.dna.k31.zip",
+                "help_text": "Sourmash index of reference genomes for read mapping with Bowtie2 as a prior step to ABUNDANCE_ESTIMATION:INSTRAIN subworkflow"
             },
             "bowtie2_samtools_threads_abundance_estimation": {
                 "default": 4
@@ -65,18 +69,21 @@
             "bowtie2_samtools_only_abundance_estimation": {
                 "default": false
             },
-            "bmtagger_db_abundance_estimation": {
-                "default": "/data/pam/software/BMTAGGER_INDEX"
-            },
-            "bmtagger_host_abundance_estimation": {
-                "default": "T2T-CHM13v2.0"
-            },
             "publish_host_reads_abundance_estimation": {
                 "default": false,
-                "help_text": "Should host reads detected by metaWRAP QC (as a prior step to Abundance estimation/inStrain subworkflow) be saved? [default: false] (optional)\n                               NB: there shouldn't be much or any such reads when filtering upstream with Kneaddata (with `--human_read_removal true`)."
+                "help_text": "Should host reads detected by metaWRAP QC (as a prior step to ABUNDANCE_ESTIMATION:INSTRAIN subworkflow) be saved? [default: false] (optional)\n                               NB: there shouldn't be much or any such reads when filtering upstream with Kneaddata (with `--human_read_removal true`)."
+            },
+            "bmtagger_db_abundance_estimation": {
+                "default": "/data/pam/software/BMTAGGER_INDEX",
+                "help_text": "location of BMTAGGER database for off-target read removal (as part of the ABUNDANCE_ESTIMATION:METAWRAP_QC subworkflow)"
+            },
+            "bmtagger_host_abundance_estimation": {
+                "default": "T2T-CHM13v2.0",
+                "help_text": "BMTAGGER database for off-target read removal (as part of the ABUNDANCE_ESTIMATION:METAWRAP_QC subworkflow); default to human genome assembly T2T-CHM13v2.0"
             },
             "cleanup_intermediate_files_abundance_estimation": {
-                "default": true
+                "default": true,
+                "help_text": "Should possibly large and numerous intermediate files from the ABUNDANCE_ESTIMATION workflow be removed on the fly from the work/ folder? (prevents use of the -resume functionality for this workflow)"
             }
         }
     },
