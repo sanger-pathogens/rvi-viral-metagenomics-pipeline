@@ -23,7 +23,7 @@ def printHelp() {
                               ["${workflow.ProjectDir}/assorted-sub-workflows/combined_input/schema.json",
                                "${workflow.ProjectDir}/assorted-sub-workflows/irods_extractor/schema.json",
                                "${workflow.ProjectDir}/modules/preprocessing/schema.json",
-                               "${workflow.ProjectDir}/modules/subsample/schema.json",,
+                               "${workflow.ProjectDir}/modules/subsample/schema.json",
                                "${workflow.ProjectDir}/modules/assemble/schema.json",
                                "${workflow.ProjectDir}/modules/kraken2bracken/schema.json",
                                "${workflow.ProjectDir}/modules/abundance_estimation/schema.json"],
