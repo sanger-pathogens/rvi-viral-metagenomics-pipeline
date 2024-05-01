@@ -11,8 +11,8 @@ include { COMBINE_IRODS ;
 include { IRODS_EXTRACTOR             } from './assorted-sub-workflows/irods_extractor/subworkflows/irods.nf'
 include { PREPROCESSING               } from "./subworkflows/preprocessing.nf"
 include { ASSEMBLE_META               } from "./subworkflows/assemble.nf"
-include { ABUNDANCE_ESTIMATION        } from './subworkflows/abundance_estimation.nf'
 include { KRAKEN2BRACKEN              } from './subworkflows/kraken2bracken.nf'
+include { ABUNDANCE_ESTIMATION        } from './subworkflows/abundance_estimation.nf'
 
 def logo = NextflowTool.logo(workflow, params.monochrome_logs)
 
@@ -21,7 +21,12 @@ log.info logo
 def printHelp() {
     NextflowTool.help_message("${workflow.ProjectDir}/schema.json", 
                               ["${workflow.ProjectDir}/assorted-sub-workflows/combined_input/schema.json",
-                               "${workflow.ProjectDir}/assorted-sub-workflows/irods_extractor/schema.json"],
+                               "${workflow.ProjectDir}/assorted-sub-workflows/irods_extractor/schema.json",
+                               "${workflow.ProjectDir}/modules/preprocessing/schema.json",
+                               "${workflow.ProjectDir}/modules/subsample/schema.json",
+                               "${workflow.ProjectDir}/modules/assemble/schema.json",
+                               "${workflow.ProjectDir}/modules/kraken2bracken/schema.json",
+                               "${workflow.ProjectDir}/modules/abundance_estimation/schema.json"],
     params.monochrome_logs, log)
 }
 
