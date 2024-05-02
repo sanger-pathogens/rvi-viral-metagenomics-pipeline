@@ -108,7 +108,7 @@ countTaxaByTypeMinValue <- function(instrainout.by.method.type.id, filter.field,
 }
 extractValuesByType <- function(instrainout.by.method.type.id, field,
                                 filter.field = NULL, min.val = 0,
-                                FUN = median) {
+                                FUN = median, ...) {
     lapply(instrainout.by.method.type.id, function(gis.by.method){
         sapply(gis.by.method, function(gis.by.type){
             sapply(gis.by.type, function(genome.info){
@@ -118,7 +118,7 @@ extractValuesByType <- function(instrainout.by.method.type.id, field,
                 }else{
                     filter <- rep(TRUE, nrow(genome.info))
                 }
-                return(FUN(genome.info[filter,field]))
+                return(FUN(genome.info[filter,field], ...))
             })
         })
     })
@@ -127,16 +127,17 @@ extractValuesByType <- function(instrainout.by.method.type.id, field,
 method_cols <- c("peachpuff", "darkorange", "tomato")
 pdf("detected_taxa_count_by_minimum_breadth.pdf", width=12, height=7)
 for (min_breadth in c(0, 0.5, 0.8)){
-    layout(matrix(1:6, 3, 2))
+    layout(matrix(1:6, 3, 2, byrow = TRUE))
     taxacounts <- countTaxaByTypeMinValue(instrainout_bytype_bymethod_byid, "breadth", min_breadth)
+    nucdiv <- extractValuesByType(instrainout_bytype_bymethod_byid, "nucl_diversity",
+                                "breadth", min_breadth, mean, na.rm = TRUE)
     for (subset_type in subset_types){
         par(mar=c(5,12,4,2))
         boxplot(taxacounts[[subset_type]],
                 xlab = sprintf("%s reads: # genomes with breadth >= %.1f", subset_type, min_breadth), las = 1, horizontal = TRUE, col=method_cols)
         # legend("topright", legend = method_tags, fill = method_cols)
 
-        boxplot(extractValuesByType(instrainout_bytype_bymethod_byid, "nucl_diversity",
-                                    "breadth", min_breadth, mean),
+        boxplot(nucdiv[[subset_type]],
                 xlab = sprintf("%s reads: Average nucl diversity (genomes with breadth >= %.1f)", subset_type, min_breadth), las = 1, horizontal = TRUE, col=method_cols)
     }
 }
