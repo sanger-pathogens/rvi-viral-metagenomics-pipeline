@@ -33,34 +33,12 @@ colnames(instrainout_id_method_types) <- c("ID", "method", "type")
 
 unique_lane_ids <- unique(instrainout_id_method_types[["ID"]])
 
-# instrainout_bytype <- lapply(subset_types, function(x){
-#     instrainout_list[instrainout_id_method_types[,"type"] == x]
-# })
-# names(instrainout_bytype) <- subset_types
-
-# instrainout_bymethod <- lapply(method_tags, function(x){
-#     instrainout_list[instrainout_id_method_types[,"method"] == x]
-# })
-# names(instrainout_bymethod) <- method_tags
-
-# instrainout_bytype_bymethod <- lapply(subset_types, function(x){
-#     instrainout_bymethod <- lapply(method_tags, function(y){
-#         filter <- (instrainout_id_method_types[,"type"] == x) & (instrainout_id_method_types[,"method"] == y)
-#         table_sublist <- instrainout_list[filter]
-#         names(table_sublist) <- instrainout_id_method_types[filter,"ID"]
-#         return(table_sublist)
-#     })
-#     names(instrainout_bymethod) <- method_tags
-# })
-# names(instrainout_bytype_bymethod) <- subset_types
-
-
 instrainout_byid_bymethod_bytype <- lapply(unique_lane_ids, function(x){
     instrainout_bymethod <- lapply(method_tags, function(y){
         instrainout_bytype <- lapply(subset_types, function(z){
             filter <- (instrainout_id_method_types[,"type"] == z) & (instrainout_id_method_types[,"method"] == y) & (instrainout_id_method_types[,"ID"] == x)
-            table_sublist <- instrainout_list[filter]
-            if (length(table_sublist)==1){
+            if (length(which(filter))==1){
+                table_sublist <- instrainout_list[filter]
                 return(table_sublist[[1]])
             }else{
                 return(NULL)
@@ -74,30 +52,71 @@ instrainout_byid_bymethod_bytype <- lapply(unique_lane_ids, function(x){
 })
 names(instrainout_byid_bymethod_bytype) <- unique_lane_ids
 
+
+instrainout_bymethod_bytype_byid <- lapply(method_tags, function(y){
+    instrainout_bytype <- lapply(subset_types, function(z){
+        instrainout_byid <- lapply(unique_lane_ids, function(x){
+            filter <- (instrainout_id_method_types[,"type"] == z) & (instrainout_id_method_types[,"method"] == y) & (instrainout_id_method_types[,"ID"] == x)
+            if (length(which(filter))==1){
+                table_sublist <- instrainout_list[filter]
+                return(table_sublist[[1]])
+            }else{
+                return(NULL)
+            }
+        })
+        names(instrainout_byid) <- unique_lane_ids
+        return(instrainout_byid)
+    })
+    names(instrainout_bytype) <- subset_types
+    return(instrainout_bytype)
+})
+names(instrainout_bymethod_bytype_byid) <- method_tags
+
+instrainout_bytype_bymethod_byid <- lapply(subset_types, function(z){
+    instrainout_bymethod <- lapply(method_tags, function(y){
+        instrainout_byid <- lapply(unique_lane_ids, function(x){
+            filter <- (instrainout_id_method_types[,"type"] == z) & (instrainout_id_method_types[,"method"] == y) & (instrainout_id_method_types[,"ID"] == x)
+            if (length(which(filter))==1){
+                table_sublist <- instrainout_list[filter]
+                return(table_sublist[[1]])
+            }else{
+                return(NULL)
+            }
+        })
+        names(instrainout_byid) <- unique_lane_ids
+        return(instrainout_byid)
+    })
+    names(instrainout_bymethod) <- method_tags
+    return(instrainout_bymethod)
+})
+names(instrainout_bytype_bymethod_byid) <- subset_types
+
 # functions to extract properties per category
 
 ### need to also filter per read removal method
 ### then make plot metric differences per sample id (instead of just comparing distributions)
 
-countTaxaByTypeMinValue <- function(instrainout.by.id.method.type, filter.field, min.val = 0){
-    lapply(instrainout.by.id.method.type, function(gis.by.id){
-        sapply(gis.by.id, function(gis.by.method){
-            sapply(gis.by.method, function(genome.info){
-                length(which(genome.info[,filter.field] >= min.val))
+countTaxaByTypeMinValue <- function(instrainout.by.method.type.id, filter.field, min.val = 0){
+    lapply(instrainout.by.method.type.id, function(gis.by.method){
+        sapply(gis.by.method, function(gis.by.type){
+            sapply(gis.by.type, function(genome.info){
+                if (is.null(genome.info)) return(NA)
+                else return(length(which(genome.info[,filter.field] >= min.val)))
             })
         })
     })
 }
-extractValuesByType <- function(instrainout.by.id.method.type, field,
+extractValuesByType <- function(instrainout.by.method.type.id, field,
                                 filter.field = NULL, min.val = 0,
                                 FUN = median) {
-    lapply(instrainout.by.id.method.type, function(gis.by.id){
-        sapply(gis.by.id, function(gis.by.method){
-            sapply(gis.by.method, function(genome.info){
+    lapply(instrainout.by.method.type.id, function(gis.by.method){
+        sapply(gis.by.method, function(gis.by.type){
+            sapply(gis.by.type, function(genome.info){
+                if (is.null(genome.info)) return(NA)
                 if (!is.null(filter.field)){
                     filter <- genome.info[,filter.field] >= min.val
                 }else{
-                    filter <- TRUE
+                    filter <- rep(TRUE, nrow(genome.info))
                 }
                 return(FUN(genome.info[filter,field]))
             })
@@ -105,12 +124,20 @@ extractValuesByType <- function(instrainout.by.id.method.type, field,
     })
 }
 
-pdf("detected_taxa_count_by_minimum_breadth.pdf", width=20, height=20)
+method_cols <- c("peachpuff", "darkorange", "tomato")
+pdf("detected_taxa_count_by_minimum_breadth.pdf", width=12, height=7)
 for (min_breadth in c(0, 0.5, 0.8)){
-    boxplot(extractValuesByType(instrainout_byid_bymethod_bytype, "breadth", min_breadth),
-            ylab = sprintf("# genomes with breadth >= %.1f", min_breadth))
-    boxplot(countTaxaByTypeMinValue(instrainout_bytype, "nucl_diversity",
+    layout(matrix(1:6, 3, 2))
+    taxacounts <- countTaxaByTypeMinValue(instrainout_bytype_bymethod_byid, "breadth", min_breadth)
+    for (subset_type in subset_types){
+        par(mar=c(5,12,4,2))
+        boxplot(taxacounts[[subset_type]],
+                xlab = sprintf("%s reads: # genomes with breadth >= %.1f", subset_type, min_breadth), las = 1, horizontal = TRUE, col=method_cols)
+        # legend("topright", legend = method_tags, fill = method_cols)
+
+        boxplot(extractValuesByType(instrainout_bytype_bymethod_byid, "nucl_diversity",
                                     "breadth", min_breadth, mean),
-            ylab = sprintf("Average nucl diversity (genomes with breadth >= %.1f)", min_breadth))
+                xlab = sprintf("%s reads: Average nucl diversity (genomes with breadth >= %.1f)", subset_type, min_breadth), las = 1, horizontal = TRUE, col=method_cols)
+    }
 }
 dev.off()
