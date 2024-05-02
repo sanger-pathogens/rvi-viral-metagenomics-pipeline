@@ -6,15 +6,15 @@ subset_tags <- c("", "_human", "_total")
 subset_types <- c("target", "human", "total")
 method_tags <- c("kneaddata_bowtie2_T2T", "bowtie2_kraken2_T2T", "metawrap_qc_hg38")
 
-# read data
-instrainout_paths <- list.files("results", pattern = instrainout_tag,
-                              recursive = TRUE, full.names = TRUE)
-instrainout_paths <- instrainout_paths[!endsWith(instrainout_paths, paste0("#0", instrainout_tag))]
-instrainout_list <- lapply(instrainout_paths, read.delim)
-names(instrainout_list) <- sub(instrainout_tag, "", basename(instrainout_paths), fixed = TRUE)
 # save parsed data
 data_dump_name <- "collated_genome_info_tsvs.RData"
 if (!file.exists(data_dump_name)){
+    # read data
+    instrainout_paths <- list.files("results", pattern = instrainout_tag,
+                                recursive = TRUE, full.names = TRUE)
+    instrainout_paths <- instrainout_paths[!endsWith(instrainout_paths, paste0("#0", instrainout_tag))]
+    instrainout_list <- lapply(instrainout_paths, read.delim)
+    names(instrainout_list) <- sub(instrainout_tag, "", basename(instrainout_paths), fixed = TRUE)
     save(instrainout_list, file = data_dump_name)
 }else{
     load(data_dump_name)
