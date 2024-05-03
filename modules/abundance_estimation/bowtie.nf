@@ -3,7 +3,7 @@ process BOWTIE_INDEX {
     label 'mem_32'
     label 'time_queue_from_normal'
 
-    container '/software/pathogen/images/bowtie2-samtools-1.1-c1.simg'
+    container 'quay.io/sangerpathogens/bowtie2-samtools:1.1-c1'
 
     input:
     tuple val(meta), path(subset_fasta)
@@ -23,7 +23,7 @@ process BOWTIE2SAMTOOLS {
     label 'mem_4'
     label 'time_queue_from_normal'
 
-    container '/software/pathogen/images/bowtie2-samtools-1.1-c1.simg'
+    container 'quay.io/sangerpathogens/bowtie2-samtools:1.1-c1'
 
     if (params.bowtie2_samtools_only_abundance_estimation) { publishDir path: "${params.outdir}", mode: 'copy', overwrite: true, pattern: "*.sorted.bam" }
     input:

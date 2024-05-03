@@ -4,7 +4,9 @@ process SOURMASH_SKETCH {
     label 'mem_1'
     label 'time_queue_from_normal'
 
-    container '/software/pathogen/images/sourmash-4.5.0--hdfd78af_0.simg'
+    container 'quay.io/sangerpathogens/sourmash:4.5.0--hdfd78af_0'
+    // more recent options are available:
+    // container 'quay.io/sangerpathogens/sourmash:4.8.8--hdfd78af_0'
 
     input:
     tuple val(meta), path(merged_fastq)
@@ -25,7 +27,9 @@ process SOURMASH_GATHER {
     label 'mem_4'
     label 'time_queue_from_normal'
 
-    container '/software/pathogen/images/sourmash-4.5.0--hdfd78af_0.simg'
+    container 'quay.io/sangerpathogens/sourmash:4.5.0--hdfd78af_0'
+    // more recent options are available:
+    // container 'quay.io/sangerpathogens/sourmash:4.8.8--hdfd78af_0'
 
     input:
     tuple val(meta), path(sourmash_sketch)

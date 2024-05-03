@@ -6,7 +6,10 @@ process SUBSAMPLE_SEQTK {
 
     publishDir "${params.outdir}/${meta.ID}/subsampled_iteration_${iteration}", mode: 'copy', overwrite: true, pattern: "*log.txt"
 
-    container '/software/pathogen/images/seqtk-1.3--ha92aebf_0.simg'
+    container 'quay.io/biocontainers/seqtk:1.3--ha92aebf_0'
+    // more recent options are available:
+    // container 'quay.io/biocontainers/seqtk:1.3--he4a0461_6'
+    // container 'quay.io/biocontainers/seqtk:1.4--he4a0461_2'
 
     input:
     tuple val(meta), path(read_1), path(read_2)
