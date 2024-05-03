@@ -95,6 +95,12 @@ workflow ABUNDANCE_ESTIMATION{
     if (!params.bowtie2_samtools_only_abundance_estimation) {
         instrain_profiling_ch = BOWTIE2SAMTOOLS.out.bam_file.combine(stb_channel).combine(genomes_channel)
         INSTRAIN(instrain_profiling_ch)
+
+        FIX_OUTPUT(INSTRAIN.out.genome_info_file)
+        .collect() { it[1] }
+        .set { fixed_outputs }
+
+        GENERATE_INSTRAIN_SUMMARY(fixed_outputs)
     }
 
     if (params.cleanup_intermediate_files_abundance_estimation && params.bowtie2_samtools_only_abundance_estimation) {
