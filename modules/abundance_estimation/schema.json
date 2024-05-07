@@ -56,7 +56,7 @@
                 "help_text": "'Scaffold-to-Bin' table (matches assembly accessions with contig sequence accessions) for inStrain."
             },
             "abundance_estimation_subheader_4": {
-                "subtext": "\n  * Reference data file options for metaWRAP QC:"
+                "subtext": "\n  * Reference data file options for metaWRAP QC (irrelevant when --skip_qc_abundance_estimation is true):"
             },
             "bmtagger_db_abundance_estimation": {
                 "default": "/data/pam/software/BMTAGGER_INDEX",
