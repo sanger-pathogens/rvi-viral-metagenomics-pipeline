@@ -3,7 +3,7 @@
     "params": {
         "Abundance estimation (inStrain) options": {
             "abundance_estimation_subheader_1": {
-                "subtext": "\n  * Workflow step skippping/enabling options:"
+                "subtext": "\n  * Workflow step skipping/enabling options:"
             },
             "skip_qc_abundance_estimation": {
                 "default": true,
