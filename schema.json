@@ -40,6 +40,12 @@
         "stb_file_abundance_estimation": {
             "default": "/data/pam/software/RVI_DB/viral.1.1.genomic.stb",
             "help_text": "'Scaffold-to-Bin' table (matches assembly accessions with contig sequence accessions) for inStrain."
+        },
+        "Metagenome assembly options": {
+            "metaspades_base_mem_gb": {
+                "default": 16,
+                "help_text": "memmory in GB from which the METASPADES process will start iterating, doubling at every retry when failed for insufficient memory"
+            }
         }
     }
 }

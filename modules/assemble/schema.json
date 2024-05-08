@@ -3,7 +3,7 @@
     "params": {
         "Metagenome assembly options": {
             "metaspades_base_mem_gb": {
-                "default": 16,
+                "default": 4,
                 "help_text": "memmory in GB from which the METASPADES process will start iterating, doubling at every retry when failed for insufficient memory"
             }
         }
