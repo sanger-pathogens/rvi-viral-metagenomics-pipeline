@@ -1,0 +1,36 @@
+{ 
+    "pipeline": "Metagenomic classification (Kraken2/Bracken) sub-workflow",
+    "params": {
+        "Kraken2/Bracken options": {
+            "kraken2bracken_kraken2_db": {
+                "default": "/data/pam/software/kraken2/viral_kraken/"
+            },
+            "kraken2bracken_kraken2_threads": {
+                "default": 4
+            },
+            "kraken2bracken_bracken_threads": {
+                "default": 10
+            },
+            "kraken2bracken_kmer_len": {
+                "default": 35,
+                "help_text": "k-mer lenth of Bracken database"
+            },
+            "kraken2bracken_read_len": {
+                "default": 150,
+                "help_text": "ideal length of reads in sample"
+            },
+            "kraken2bracken_classification_level": {
+                "default": "S",
+                "help_text": "[Options = 'D','P','C','O','F','G','S'] - taxonomic rank to analyze for Bracken"
+            },
+            "kraken2bracken_threshold": {
+                "default": 1,
+                "help_text": "minimum number of reads required for reporting a classification at the specified rank"
+            },
+            "kraken2bracken_get_classified_reads": {
+                "default": false,
+                "help_text": "output classified reads"
+            }
+        }
+    }
+}
