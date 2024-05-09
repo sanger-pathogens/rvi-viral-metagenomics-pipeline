@@ -15,6 +15,7 @@ process KNEADDATA {
     output:
     tuple val(meta), path(output_1), path(output_2), emit: paired_channel
     tuple val(meta), path(output_1_gz), path(output_2_gz)
+    path(kd_log), emit: kd_log_ch
 
     script:
     output_1 = "${meta.ID}_1_kneaddata_paired_1.fastq"
@@ -23,6 +24,7 @@ process KNEADDATA {
     output_2_gz = "${output_2}.gz"
     output_unmatched_1 = "${meta.ID}_1_kneaddata_unmatched_1.fastq"
     output_unmatched_2 = "${meta.ID}_1_kneaddata_unmatched_2.fastq"
+    kd_log = "${meta.ID}_1_kneaddata.log"
     """
     kneaddata -t ${task.cpus} -p 2 -i1 ${R1} -i2 ${R2} -db ${params.off_target_db} --output . --sequencer-source ${params.sequencer_source} \
     --trimmomatic-options "${params.trimmomatic_options}"
