@@ -43,6 +43,9 @@
                 "default": "/data/pam/team162/shared/sourmash_db/gtdb-rs207.genomic-reps.dna.k31.zip",
                 "help_text": "Sourmash index of reference genomes for read mapping with Bowtie2 as a prior step to abundance estimation with inStrain"
             },
+            "abundance_estimation_subheader_4": {
+                "subtext": "\n  * Reference data file options for Bowtie2/inStrain that are required when --sourmash_subset_abundance_estimation is false, not used otherwise:"
+            },
             "genome_file_abundance_estimation": {
                 "default": "",
                 "help_text": "reference genome database for mapping with Bowtie2 prior to abundance estimation with inStrain (mandatory)."
@@ -55,7 +58,7 @@
                 "default": "/lustre/scratch125/pam/data/software/gtdb/gtdb_genomes_reps_r207/gtdb_genomes_reps_r207.stb",
                 "help_text": "'Scaffold-to-Bin' table (matches assembly accessions with contig sequence accessions) for inStrain."
             },
-            "abundance_estimation_subheader_4": {
+            "abundance_estimation_subheader_5": {
                 "subtext": "\n  * Reference data file options for metaWRAP QC (irrelevant when --skip_qc_abundance_estimation is true):"
             },
             "bmtagger_db_abundance_estimation": {
@@ -66,7 +69,7 @@
                 "default": "T2T-CHM13v2.0",
                 "help_text": "BMTAGGER database for off-target read removal (as part of the ABUNDANCE_ESTIMATION:METAWRAP_QC subworkflow); default to human genome assembly T2T-CHM13v2.0"
             },
-            "abundance_estimation_subheader_5": {
+            "abundance_estimation_subheader_6": {
                 "subtext": "\n  * Runtime parameter options:"
             },
             "bowtie2_samtools_threads_abundance_estimation": {
