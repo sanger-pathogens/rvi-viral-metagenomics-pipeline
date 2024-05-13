@@ -16,7 +16,8 @@ process PARSE_KD_LOG {
 
     script:
     output_txt="kneaddata_filtered_reads_report.txt"
+    count_read_script = "${projectDir}/bin/count_reads_in_kd_log.py"
     """
-    python3 count_reads_in_kd_log.py *_1_kneaddata.log ${output_txt}
+    python3 ${count_read_script} *_1_kneaddata.log ${output_txt}
     """
 }

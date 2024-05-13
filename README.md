@@ -1,92 +1,150 @@
 # RVI-pipeline
 
+This bioinformatic pipeline is designed to automate the analysis of data from the production sequencing pipeline of the [RVI project](https://www.sanger.ac.uk/group/respiratory-virus-and-microbiome-initiative/), specifically dealing with short-read sequencing data generated from the bait-capture protocol for enrichment of viral DNA.
 
+It is composed of several subworkflows:
 
-## Getting started
+- extraction of "raw" data and processing to ouptput high-quality data
+    - "raw" i.e. NPG-processed short reads are downloaded from the iRODS storage platform based on their study, run, lane and plex identifier
+    - this is followed by quality control and read filtering (including human read removal) using Kneaddata, which output is published i.e. written to the output folder
+- Kraken2/Bracken (k-mer-based) taxonomic assignment and abundance estimation - by default searching a database covering all viral genomes in NCBI RefSeq + the human genome
+- inStrain (reference read mapping-based) taxonomic assignment and abundance estimation - by default searching a database covering all viral genomes in RefSeq
+- metaSPAdes de novo assembly into metagenomic genome bins i.e. metagenome-assembled genomes (MAGs); default behaviour is to subsample reads to a maximum of 1 million ahead of assembly.
 
-To make it easy for you to get started with GitLab, here's a list of recommended next steps.
+## Input
 
-Already a pro? Just edit this README.md and make it your own. Want to make it easy? [Use the template at the bottom](#editing-this-readme)!
+The input is curretly specified as command-line parameters pointing to the sequencing "lanes" produced by the Sanger sequencing pipeline and stored on the iRODS server. This is generally achieved by specifying their study, run, lane and plex identifier. with this approach, only the first level (study) of input specification is mandataory, leading to downloading all data from this study. Queries to pick data/lanes from iRODS can be further tailored using various metadata fields, using a "manifest of lanes" CSV file to describe the queries. Another appraoch is to provide reads already present on disk through a "manifest of reads" CSV file. All these input appraoches are described in the Usage section via the pipeline help message.
 
-## Add your files
+We will soon introduce support for using a manifest as input, allowing batch and more flexible input specification.
 
-- [ ] [Create](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#create-a-file) or [upload](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#upload-a-file) files
-- [ ] [Add files using the command line](https://docs.gitlab.com/ee/gitlab-basics/add-file.html#add-a-file-using-the-command-line) or push an existing Git repository with the following command:
+It is important to note that although the pipeline input is specified as whole studies (or more refined searches based on run ID etc.), only data that does not already exist in the results directory is downloaded. This is checked at the time of starting the pipeline based on presence/absence of the trimmed_reads folder in the results directory (as specified by --outdir  parameter). Therefore it is important to re-use the same results directory to avoid redownloading and reanalysis of the same data. 
+
+## Output
+
+This pipeline will have a wide variety of results, which will be written in the output directory specified by the `--outdir` parameter (default name `result`/`), each with a directory sub-structure similar to the below:
 
 ```
-cd existing_repo
-git remote add origin https://gitlab.internal.sanger.ac.uk/sanger-pathogens/pipelines/rvi-pipeline.git
-git branch -M main
-git push -uf origin main
+results/
+├── metadata_irods_queried_2024-05-03T16:05:12.235708+01:00.csv
+├── 48843_1#1
+│   ├── bracken
+│   │   ├── 48843_1#1.bracken
+│   │   ├── 48843_1#1_kraken_sample_report_bracken_species.tsv
+│   │   └── 48843_1#1_report_bracken_species.mpa.txt
+│   ├── instrain
+│   │   └── 48843_1#1_genome_info.tsv
+│   ├── kraken2
+│   │   ├── 48843_1#1_kraken_report.tsv
+│   │   └── 48843_1#1_kraken_sample_report.tsv
+│   ├── metaspades
+│   │   ├── 48843_1#1_contigs.fa
+│   │   └── 48843_1#1_scaffolds.fa
+│   └── trimmed_reads
+│       ├── 48843_1#1_1_kneaddata_paired_1.fastq.gz
+│       └── 48843_1#1_1_kneaddata_paired_2.fastq.gz
+...
+├── abundance_summary
+│   └── summary_report.tsv
+├── mapping_rates
+│   └── 2024-05-03T16:05:12.235708+01:00_mapping_rates.csv
+└── pipeline_info
+    ├── execution_report_2024-05-03_16-05-10.html
+    ├── execution_timeline_2024-05-03_16-05-10.html
+    ├── execution_trace_2024-05-03_16-05-10.txt
+    └── pipeline_dag_2024-05-03_16-05-10.svg
 ```
 
-## Integrate with your tools
+Nextflow trace and other files describing the execution of the pipeline per sample and per process will be written in the `results/pipeline_info/` directory by default. 
 
-- [ ] [Set up project integrations](https://gitlab.internal.sanger.ac.uk/sanger-pathogens/pipelines/rvi-pipeline/-/settings/integrations)
+A metadata file describing the data downloaded from IRODS will be written under the output folder. This metadata includes a path to the data on iRODS for later targeted retrieval as well as basic information such as read count in the CRAM file, reference used for CRAM compression, as well as sample name, ENA run/sample accession etc.
 
-## Collaborate with your team
+In the output folder you should also find one folder per Lane_ID, which will feature a folder for each of the analyses undertaken:
 
-- [ ] [Invite team members and collaborators](https://docs.gitlab.com/ee/user/project/members/)
-- [ ] [Create a new merge request](https://docs.gitlab.com/ee/user/project/merge_requests/creating_merge_requests.html)
-- [ ] [Automatically close issues from merge requests](https://docs.gitlab.com/ee/user/project/issues/managing_issues.html#closing-issues-automatically)
-- [ ] [Enable merge request approvals](https://docs.gitlab.com/ee/user/project/merge_requests/approvals/)
-- [ ] [Automatically merge when pipeline succeeds](https://docs.gitlab.com/ee/user/project/merge_requests/merge_when_pipeline_succeeds.html)
+- `raw_fastq` contains the reads as directly unpacked from the CRAM file stored on IRODS; this output is optional as raw fastq files are not saved as output by default.
+- `trimmed_reads` contains the human read-removed and adapter-trimmed reads output as ouput by Kneaddata, which are then used in the downstream processes.
+- `instrain` contains the abundance estimation and population genomics profiling output from inStrain, a file ending with `*_genome_info.tsv` .
+- `metaspades` contains metagenomic assembly scaffolds and contigs files
+- `kraken2` contains a taxonomic profiling table reporting read counts assigned to varied taxa represented in the reference Kraken database
+- `bracken` contains a relative abundance estimation profile derived from the Kraken results, in various formats including the MataPhlan-style `.mpa.txt` format
 
-## Test and Deploy
+Finally, the `work/` folder contains all temporary files from the piepline run, which has a potentially very large footprint on disk. This is required while the pipeline is runnig, and is worth keeping as cache data to enable the `-resume` mode of Nextflow to pick up the piepline execution where it was left after a server crash or interuption due to a bug (the piepline can be resume after a bug fix and will reuse most intermediary processing results as cached). It is recommended to delete this folder, alongside the `.nexflow.log*` files and `.nextflow` folder once satisfied with the output.
 
-Use the built-in continuous integration in GitLab.
+An example of a pipeline run can be found here: `/data/pam/rvidata/scratch/bait_capture/rvi_prod_5-2024_05_02-48843_1` 
 
-- [ ] [Get started with GitLab CI/CD](https://docs.gitlab.com/ee/ci/quick_start/index.html)
-- [ ] [Analyze your code for known vulnerabilities with Static Application Security Testing(SAST)](https://docs.gitlab.com/ee/user/application_security/sast/)
-- [ ] [Deploy to Kubernetes, Amazon EC2, or Amazon ECS using Auto Deploy](https://docs.gitlab.com/ee/topics/autodevops/requirements.html)
-- [ ] [Use pull-based deployments for improved Kubernetes management](https://docs.gitlab.com/ee/user/clusters/agent/)
-- [ ] [Set up protected environments](https://docs.gitlab.com/ee/ci/environments/protected_environments.html)
+## Data-Storage and permissions
 
-***
+This pipeline directly copies the CRAM files from iRODS and unpacks them into the .fastq files to be used; please allow for plenty of available disk space quota to allow for this decompression.  
 
-# Editing this README
-
-When you're ready to make this README your own, just edit this file and use the handy template below (or feel free to structure it however you want - this is just a starting point!). Thank you to [makeareadme.com](https://www.makeareadme.com/) for this template.
-
-## Suggestions for a good README
-Every project is different, so consider which of these sections apply to yours. The sections used in the template are suggestions for most open source projects. Also keep in mind that while a README can be too long and detailed, too long is better than too short. If you think your README is too long, consider utilizing another form of documentation rather than cutting out information.
-
-## Name
-Choose a self-explaining name for your project.
-
-## Description
-Let people know what your project can do specifically. Provide context and add a link to any reference visitors might be unfamiliar with. A list of Features or a Background subsection can also be added here. If there are alternatives to your project, this is a good place to list differentiating factors.
-
-## Badges
-On some READMEs, you may see small images that convey metadata, such as whether or not all the tests are passing for the project. You can use Shields to add some to your README. Many services also have instructions for adding a badge.
-
-## Visuals
-Depending on what you are making, it can be a good idea to include screenshots or even a video (you'll frequently see GIFs rather than actual videos). Tools like ttygif can help, but check out Asciinema for a more sophisticated method.
-
-## Installation
-Within a particular ecosystem, there may be a common way of installing things, such as using Yarn, NuGet, or Homebrew. However, consider the possibility that whoever is reading your README is a novice and would like more guidance. Listing specific steps helps remove ambiguity and gets people to using your project as quickly as possible. If it only runs in a specific context like a particular programming language version or operating system or has dependencies that have to be installed manually, also add a Requirements subsection.
+Due to this iRODS download step, in order to run this pipeline your Sanger farm account must be iRODS enabled; Please contact servicedesk@sanger.ac.uk or arrange with PaM informatics via the [PAM Operations Desk General Informatics Support page](https://jira.sanger.ac.uk/servicedesk/customer/portal/16/create/246) to request the necessary permissions to log in and download data from this storage platform.
 
 ## Usage
-Use examples liberally, and show the expected output if you can. It's helpful to have inline the smallest example of usage that you can demonstrate, while providing links to more sophisticated examples if they are too long to reasonably include in the README.
 
-## Support
-Tell people where they can go to for help. It can be any combination of an issue tracker, a chat room, an email address, etc.
+### Help message and configuration info
+All pipeline options are documented in the help message, which can be printed using this command:
+```sh
+nextflow run rvi-pipeline/main.nf --help
+```
 
-## Roadmap
-If you have ideas for releases in the future, it is a good idea to list them in the README.
+Default configuration of the pipeline can be printed out using this command:
+```sh
+nextflow config rvi-pipeline/
+```
+This will print out all parameters defaults, including details of all reference databases and files used in the pipeline analyses.  
 
-## Contributing
-State if you are open to contributions and what your requirements are for accepting them.
+This default configuration can be altered using a combination of custom config files provided via the `-c` argument or though CLI options e.g. `--save_fastqs true` will override the default value of `false` for the `save_fastqs` parameter.
 
-For people who want to make changes to your project, it's helpful to have some documentation on how to get started. Perhaps there is a script that they should run or some environment variables that they need to set. Make these steps explicit. These instructions could also be useful to your future self.
 
-You can also document commands to lint the code or run tests. These steps help to ensure high code quality and reduce the likelihood that the changes inadvertently break something. Having instructions for running tests is especially helpful if it requires external setup, such as starting a Selenium server for testing in a browser.
+## Running the pipeline
+
+When running this pipeline, you will need to use the `bsub` command, or its shorthand `bsub.py` (available to PaM users using `module load bsub.py`) to run the the `nextflow` command to avoid overloading the farm head nodes the Nextflow master process, and to avoid interuption of the run (which can take up to several days) when logging off. It is recommended to submit this job to the `oversubscribed` queue.
+
+
+Below are example of ways the pipeline can be set to run:
+
+With a combination of CLI options to specify a sequencing run from iRODS as input:
+```sh
+bsub.py -q oversubscribed -o rvi-pipeline.log -e rvi-pipeline.log 4 rvi-pipeline \
+    nextflow run rvi-pipeline/main.nf \
+	--studyid 7289 --runid 48843 --laneid 2 --outdir results
+```
+
+With a more complex set of paraemeters to request data from iRODS, using a manifest of lanes:
+```sh
+bsub.py -q oversubscribed -o rvi-pipeline.log -e rvi-pipeline.log 4 rvi-pipeline \
+    nextflow run rvi-pipeline/main.nf \
+	--manifest_of_lanes irods_manifest.csv --outdir results
+```
+
+With short read datasets already present on disk, usin ga manifest of reads:
+```sh
+bsub.py -q oversubscribed -o rvi-pipeline.log -e rvi-pipeline.log 4 rvi-pipeline \
+    nextflow run rvi-pipeline/main.nf \
+	--manifest_of_reads reads_manifest.csv --outdir results
+```
+
+... or any combination of the above!
+
+Adding `-resume` to any of these commands should allow resuming the piepline after interuption, for instance if the piepline run has exceeded the runtime limit of the job queue through which it was submitted.
+
+## Dependencies
+
+This pipeline relies on the following software modules when used on the Sanger farm:
+
+```
+nextflow/23.10.1-5891
+ISG/singularity/3.6.4
+```
+
+All other software dependencies are handled by Nextflow through pulling of docker containers from publicly hosted repositories; these can be listed  using the following command:
+```
+grep '    container ' rvi-pipeline/assorted-sub-workflows/*/modules/*.nf rvi-pipeline/modules/*/*.nf | sort -u
+```
 
 ## Authors and acknowledgment
-Show your appreciation to those who have contributed to the project.
+This pipeline was develoed by the PaM Informatics team at the Wellcome Sanger Institute, Parasites and Microbes Programme.
 
 ## License
-For open source projects, say how it is licensed.
+This software is licensed under the MIT license.
 
 ## Project status
 If you have run out of energy or time for your project, put a note at the top of the README saying that development has slowed down or stopped completely. Someone may choose to fork your project or volunteer to step in as a maintainer or owner, allowing your project to keep going. You can also make an explicit request for maintainers.
