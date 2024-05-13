@@ -3,7 +3,7 @@ process INSTRAIN {
     label 'mem_4'
     label 'time_queue_from_normal'
 
-    container 'quay.io/biocontainers/instrain:instrain:1.6.4--pyhdfd78af_0'
+    container 'quay.io/biocontainers/instrain:1.6.4--pyhdfd78af_0'
     // more recent options are available:
     // container 'quay.io/biocontainers/instrain:1.8.1--pyhdfd78af_0'
     // verson 1.7.0 is to be ignored as bug fixes came in later
