@@ -5,8 +5,14 @@ process INSTRAIN {
 
     container 'quay.io/biocontainers/instrain:1.6.4--pyhdfd78af_0'
     // more recent options are available:
-    // container 'quay.io/biocontainers/instrain:1.8.1--pyhdfd78af_0'
-    // verson 1.7.0 is to be ignored as bug fixes came in later
+    // - verson 1.7.0 is used in team162's version of abundance_estimation pipeline,
+    //   but should be avoided as known to be unstable annd several bug fixes were introduced later
+    // - v1.8.1 introduces fixes for the above; v1.8.0 introduced nicer error handling when there is no hit,
+    //   and that would make the output much more readable in those cases - but that means we need to test
+    //   that the output are similar, beyond that it just works
+    //   container 'quay.io/biocontainers/instrain:1.8.1--pyhdfd78af_0'
+    // - v1.9.0 latest with "Efficiency improvements for inStrain compare and Error message clarification" 
+    //   but very recent so might be unstable
 
     if (params.instrain_full_output_abundance_estimation) { publishDir path: "${params.outdir}/${meta.ID}/instrain/", mode: 'copy', overwrite: true, pattern: "*_instrain_output" }
     if (params.instrain_quick_profile_abundance_estimation) { publishDir path: "${params.outdir}/${meta.ID}/instrain/", mode: 'copy', overwrite: true, pattern: "*_instrain_quick_profile_output" }
