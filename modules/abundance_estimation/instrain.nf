@@ -79,7 +79,7 @@ process FIX_OUTPUT {
 
     script:
     """
-    ./fix_output.sh ${params.taxonomy_lookup}
+    ./fix_output.sh ${params.stb_file_abundance_estimation}
     """
 }
 
