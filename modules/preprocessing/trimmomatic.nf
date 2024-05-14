@@ -4,7 +4,7 @@ process TRIMMOMATIC {
     label 'time_1'
     cpus params.trimmomatic_threads
 
-    container '/software/pathogen/images/trimmomatic-0.39--1.simg'
+    container 'quay.io/biocontainers/trimmomatic:0.39--1'
 
     publishDir enabled: params.publish_trimmed_reads, mode: 'copy', pattern: "${output_1_gz}", path: "${params.outdir}/${meta.ID}/trimmed_reads/"
     publishDir enabled: params.publish_trimmed_reads, mode: 'copy', pattern: "${output_2_gz}", path: "${params.outdir}/${meta.ID}/trimmed_reads/"
@@ -16,7 +16,7 @@ process TRIMMOMATIC {
     tuple val(meta), path(output_1), path(output_2), emit: paired_channel
     tuple val(meta), path(output_1_gz), path(output_2_gz)
 
-    script:\
+    script:
     output_1="${meta.ID}_trimmed_1.fastq"
     output_2="${meta.ID}_trimmed_2.fastq"
     output_1_gz = "${output_1}.gz"

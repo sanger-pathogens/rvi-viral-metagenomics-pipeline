@@ -1,0 +1,50 @@
+{ 
+    "pipeline": "PaM Info RVI viral metagenomics pipeline",
+    "params": {
+        "Logging options": {
+            "monochrome_logs": {
+                "default": "false",
+                "help_text": "Should logs appear in plain ASCII"
+            }
+        }
+    },
+    "overwrite_param": {
+        "cleanup_intermediate_files_irods_extractor": {
+            "default": "true",
+            "help_text": "delete intermediate CRAM files downloaded from IRODS in work/ folder"
+        },
+        "preexisting_fastq_tag": {
+            "default": "trimmed_reads",
+            "help_text": "if the expected ouput fastq files exist in the folder named like this under the result folder for the sample e.g. in results/12345_1#67/trimmed_reads/12345_1#67_1.fastq.gz,\n            then skip download and any further processing for this sample. Default value 'trimmed_reads' means the run skips items for which the output for the PREPROCESSING subworkflow already exists."
+        },
+        "split_sep_for_ID_from_fastq":{
+            "default": "_1_kneaddata_paired_1.fastq",
+            "help_text": "separator to recognise sample ID from preexisting file."
+        },
+        "instrain_profile_options": {
+            "default": "--min_genome_coverage 0 --min_read_ani 0.9",
+            "help_text": "profiling parameters for inStrain standard abundance estimation method; default for RVI pipeline is '--min_genome_coverage 0 --min_read_ani 0.9', not '--database-mode'."
+        },
+        "subsample_limit": {
+            "default": 500000,
+            "help_text": "minimum number of total reads (i.e. summing counts in both paired-end read files) to trigger read subsampling ahead of metagenomic assembly"
+        },
+        "genome_file_abundance_estimation": {
+            "default": "/data/pam/software/RVI_DB/viral.1.1.genomic_sorted.fna",
+            "help_text": "reference genome database for mapping with Bowtie2 prior to abundance estimation with inStrain (mandatory)."
+        },
+        "precomputed_index_abundance_estimation": {
+            "default": "/data/pam/software/RVI_DB/viral.1.1.genomic_sorted.bt2",
+            "help_text": "Pre-computed Bowtie2 index for reference genome database prior to abundance estimation with inStrain (mandatory)."
+        },
+        "stb_file_abundance_estimation": {
+            "default": "/data/pam/software/RVI_DB/viral.1.1.genomic.stb",
+            "help_text": "'Scaffold-to-Bin' table (matches assembly accessions with contig sequence accessions) for inStrain."
+        },
+        "metaspades_base_mem_gb": {
+            "default": 16,
+            "help_text": "memmory in GB from which the METASPADES process will start iterating, doubling at every retry when failed for insufficient memory"
+        }
+    }
+}
+
