@@ -13,9 +13,9 @@ process INSTRAIN {
     tuple val(meta), path(sorted_bam), path(stb_file), path(genome_file)
 
     output:
-    path("${meta.ID}_instrain_output"), optional: true
-    path("${meta.ID}_instrain_quick_profile_output"), optional: true
-    path("${genome_info_file}"), optional: true
+    path("${meta.ID}_instrain_output"), emit: full_output, optional: true
+    path("${meta.ID}_instrain_quick_profile_output"), emit: quick_profile, optional: true
+    path("${genome_info_file}"), emit: genome_info_file, optional: true
     path(sorted_bam), emit: sorted_bam
     tuple val(meta), path("${workdir}"), emit: meta_workdir
 
