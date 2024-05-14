@@ -4,7 +4,7 @@ process METASPADES {
     label "mem_${params.metaspades_base_mem_gb}"
     label 'time_12'
 
-    container '/software/pathogen/images/spades-3.15.5--h95f258a_1.simg'
+    container 'quay.io/biocontainers/spades:3.15.5--h95f258a_1'
 
     publishDir "${params.outdir}/${basemetaID}/metaspades/", mode: 'copy', overwrite: true, pattern: 'contigs.fasta', saveAs: { filename -> "${meta.ID}_contigs.fa" }
     publishDir "${params.outdir}/${basemetaID}/metaspades/", mode: 'copy', overwrite: true, pattern: 'scaffolds.fasta', saveAs: { filename -> "${meta.ID}_scaffolds.fa" }

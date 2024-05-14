@@ -4,7 +4,7 @@ process KNEADDATA {
     label 'time_12'
     cpus { task.attempt > 1 ? 1 : params.kneaddata_threads }
 
-    container '/software/pathogen/images/kneaddata-0.12.0.simg'
+    container 'quay.io/sangerpathogens/kneaddata:0.12.0'
 
     publishDir enabled: params.publish_trimmed_reads, mode: 'copy', pattern: "${output_1_gz}", path: "${params.outdir}/${meta.ID}/trimmed_reads/"
     publishDir enabled: params.publish_trimmed_reads, mode: 'copy', pattern: "${output_2_gz}", path: "${params.outdir}/${meta.ID}/trimmed_reads/"
