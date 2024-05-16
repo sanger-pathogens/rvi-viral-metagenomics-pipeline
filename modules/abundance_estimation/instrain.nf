@@ -64,25 +64,6 @@ process GENERATE_STB {
     """
 }
 
-process FIX_OUTPUT {
-    label 'cpu_1'
-    label 'mem_1'
-    label 'time_1'
-
-    publishDir "${params.outdir}/${meta.ID}/instrain/", mode: 'copy', overwrite: true, pattern: "*_genome_info_fixed.tsv"
-
-    input:
-    tuple val(meta), path(genome_info_file)
-
-    output:
-    tuple val(meta), path("*_genome_info_fixed.tsv"),  emit: fixed_output
-
-    script:
-    """
-    ${projectDir}/bin/fix_output.sh ${params.stb_file_abundance_estimation}
-    """
-}
-
 process GENERATE_INSTRAIN_SUMMARY {
     label 'cpu_1'
     label 'mem_1'
