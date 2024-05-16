@@ -25,7 +25,7 @@ include { MERGE_FASTQS } from '../modules/abundance_estimation/merge_fastq.nf'
 include { SOURMASH_SKETCH; SOURMASH_GATHER } from '../modules/abundance_estimation/sourmash.nf'
 include { SUBSET_GTDB } from '../modules/abundance_estimation/subset_fasta.nf'
 include { BOWTIE_INDEX; BOWTIE2SAMTOOLS; GET_OVERALL_MAPPING_RATE } from '../modules/abundance_estimation/bowtie.nf'
-include { GENERATE_STB; INSTRAIN } from '../modules/abundance_estimation/instrain.nf'
+include { GENERATE_STB; INSTRAIN; FIX_OUTPUT; GENERATE_INSTRAIN_SUMMARY } from '../modules/abundance_estimation/instrain.nf'
 
 //
 // SUBWORKFLOWS
