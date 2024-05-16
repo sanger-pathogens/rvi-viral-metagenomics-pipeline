@@ -79,6 +79,6 @@ process GENERATE_INSTRAIN_SUMMARY {
 
     script:
     """
-    ${projectDir}/bin/combine_fixed_output.sh
+    ${projectDir}/bin/combine_instrain_output.sh
     """
 }
