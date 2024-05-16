@@ -93,10 +93,16 @@ workflow ABUNDANCE_ESTIMATION{
     GET_OVERALL_MAPPING_RATE(BOWTIE2SAMTOOLS.out.map_rate_ch.collect())
 
     if (!params.bowtie2_samtools_only_abundance_estimation) {
-        instrain_profiling_ch = BOWTIE2SAMTOOLS.out.bam_file.combine(stb_channel).combine(genomes_channel)
+        BOWTIE2SAMTOOLS.out.bam_file
+        .combine(stb_channel)
+        .combine(genomes_channel)
+        .set { instrain_profiling_ch }
+        
         INSTRAIN(instrain_profiling_ch)
 
         FIX_OUTPUT(INSTRAIN.out.genome_info_file)
+
+        FIX_OUTPUT.out.fixed_output
         .collect() { it[1] }
         .set { fixed_outputs }
 

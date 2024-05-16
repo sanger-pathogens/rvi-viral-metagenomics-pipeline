@@ -24,7 +24,7 @@ process INSTRAIN {
     output:
     path("${meta.ID}_instrain_output"), emit: full_output, optional: true
     path("${meta.ID}_instrain_quick_profile_output"), emit: quick_profile, optional: true
-    path("${genome_info_file}"), emit: genome_info_file, optional: true
+    tuple val(meta), path("${genome_info_file}"), emit: genome_info_file, optional: true
     path(sorted_bam), emit: sorted_bam
     tuple val(meta), path("${workdir}"), emit: meta_workdir
 
@@ -69,7 +69,7 @@ process FIX_OUTPUT {
     label 'mem_1'
     label 'time_1'
 
-    publishDir "${params.outdir}/${meta.ID}/instrain/", mode: 'copy', overwrite: true
+    publishDir "${params.outdir}/${meta.ID}/instrain/", mode: 'copy', overwrite: true, pattern: "*_genome_info_fixed.tsv"
 
     input:
     tuple val(meta), path(genome_info_file)
