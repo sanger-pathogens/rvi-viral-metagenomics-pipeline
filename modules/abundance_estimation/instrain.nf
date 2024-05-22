@@ -75,7 +75,7 @@ process GENERATE_INSTRAIN_SUMMARY {
     path(genome_info_files)
 
     output:
-    path("instrain_summary.tsv"),  emit: instrain_summary
+    path("instrain_summary*.tsv"),  emit: instrain_summary
 
     script:
     """

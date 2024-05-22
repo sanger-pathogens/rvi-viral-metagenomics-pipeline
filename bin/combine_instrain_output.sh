@@ -2,6 +2,8 @@
 
 set -eo pipefail
 
+customtaxnames="${1}"
+
 readarray -t species_array < <(tail -q -n +2 *.tsv | awk -F '\t' '{print $1}' | sort -u)
 
 for file in *.tsv; do
@@ -21,4 +23,21 @@ done
 
 cat <(echo) <(printf '%s\n' "${species_array[@]}") > row_labels.tmp
 paste row_labels.tmp *_species_lookup.tmp > instrain_summary.tsv
+
+if [ -n "${customtaxnames}" ] ; then
+  declare -A customtaxa_array
+  while IFS=$'\t' read taxonin taxonout; do
+    customtaxa_array["$taxonin"]=$taxonout
+  done < ${customtaxnames}
+  while read taxonin ; do
+    trtaxon=customtaxa_array["$taxonin"]
+    if [ -z "${trtaxon}" ] ; then
+      echo ${taxonin}
+    else
+      echo ${trtaxon}
+    fi
+  done < row_labels.tmp > row_labels_custom.tmp
+  paste row_labels_custom.tmp *_species_lookup.tmp > instrain_summary_custom.tsv
+fi
+
 rm *.tmp 
