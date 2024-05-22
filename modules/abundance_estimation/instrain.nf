@@ -41,7 +41,7 @@ process INSTRAIN {
     fi
     if ! ${params.instrain_full_output_abundance_estimation} && ! ${params.instrain_quick_profile_abundance_estimation}
     then
-        mv ${meta.ID}_instrain_output/output/${meta.ID}"_instrain_output_genome_info.tsv" ./${meta.ID}"_genome_info.tsv"
+        mv ${meta.ID}_instrain_output/output/${meta.ID}"_instrain_output_genome_info.tsv" ./${genome_info_file}
     fi
     """
 }
@@ -72,7 +72,7 @@ process GENERATE_INSTRAIN_SUMMARY {
     publishDir "${params.outdir}/abundance_summary", mode: 'copy', overwrite: true
 
     input:
-    path(fixed_outputs)
+    path(genome_info_files)
 
     output:
     path("instrain_summary.tsv"),  emit: instrain_summary
