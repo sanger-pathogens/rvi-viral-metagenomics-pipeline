@@ -56,7 +56,11 @@
             },
             "stb_file_abundance_estimation": {
                 "default": "/lustre/scratch125/pam/data/software/gtdb/gtdb_genomes_reps_r207/gtdb_genomes_reps_r207.stb",
-                "help_text": "'Scaffold-to-Bin' table (matches assembly accessions with contig sequence accessions) for inStrain."
+                "help_text": "'Scaffold-to-Bin' table (matches assembly accessions with contig sequence accessions) for inStrain. Any custom name translation table can be used here, butit requires to cover the whole set of genomes in the refrence database."
+            },
+            "custom_taxon_names_abundance_estimation": {
+                "default": "",
+                "help_text": "dictionary of taxon names (as provided in value field of STB file --stb_file_abundance_estimation) to custom names, used for ad-hoc relabelling. A 2-column TSV format expected; this may only feature a subset of taxa included in the database."
             },
             "abundance_estimation_subheader_5": {
                 "subtext": "\n  * Reference data file options for metaWRAP QC (irrelevant when --skip_qc_abundance_estimation is true):"

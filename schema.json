@@ -41,6 +41,10 @@
             "default": "/data/pam/software/RVI_DB/viral.1.1.genomic.stb",
             "help_text": "'Scaffold-to-Bin' table (matches assembly accessions with contig sequence accessions) for inStrain."
         },
+        "custom_taxon_names_abundance_estimation": {
+            "default": "/data/pam/software/RVI_DB/handpicked_viral_taxa_short_names_dict.txt",
+            "help_text": "dictionary of taxon names (as provided in value field of STB file --stb_file_abundance_estimation) to custom names, used for ad-hoc relabelling. A 2-column TSV format expected; this may only feature a subset of taxa included in the database."
+        },
         "metaspades_base_mem_gb": {
             "default": 16,
             "help_text": "memmory in GB from which the METASPADES process will start iterating, doubling at every retry when failed for insufficient memory"
