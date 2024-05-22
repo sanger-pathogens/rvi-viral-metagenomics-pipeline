@@ -30,7 +30,7 @@ if [ -n "${customtaxnames}" ] ; then
     customtaxa_array["$taxonin"]=$taxonout
   done < ${customtaxnames}
   while read taxonin ; do
-    trtaxon=customtaxa_array["$taxonin"]
+    trtaxon=${customtaxa_array["${taxonin}"]}
     if [ -z "${trtaxon}" ] ; then
       echo ${taxonin}
     else
