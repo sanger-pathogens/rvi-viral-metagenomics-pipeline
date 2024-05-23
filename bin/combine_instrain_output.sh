@@ -29,7 +29,7 @@ if [ -n "${customtaxnames}" ] ; then
   while IFS=$'\t' read taxonin taxonout; do
     customtaxa_array["$taxonin"]=$taxonout
   done < ${customtaxnames}
-  while read taxonin ; do
+  tail -n+2 row_labels.tmp | while read taxonin ; do
     echo "try and replace '${taxonin}' name..." 1 >& 2
     trtaxon=${customtaxa_array["$taxonin"]} || echo "'${taxonin}' is not present in the dataset; skip." 1 >& 2
     if [ -z "${trtaxon}" ] ; then
@@ -37,7 +37,7 @@ if [ -n "${customtaxnames}" ] ; then
     else
       echo ${trtaxon}
     fi
-  done < row_labels.tmp > row_labels_custom.tmp
+  done > row_labels_custom.tmp
   paste row_labels_custom.tmp *_species_lookup.tmp > instrain_summary_custom.tsv
 fi
 
