@@ -47,7 +47,7 @@ else
   cp instrain_summary.tsv instrain_summary_tidynames.tsv
 fi
 # sanitise the names by removing redundant substrings
-for redundanttag in ', complete genome' ', complete sequence' ' genomic sequence' ', complete cds'
+for redundanttag in ', complete genome' ', complete sequence' ' genomic sequence' ', complete cds' ; do
   sed -i "s|$redundanttag||g" instrain_summary_tidynames.tsv
 done
 # clean up
