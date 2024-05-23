@@ -3,6 +3,7 @@
 set -eo pipefail
 
 customtaxnames="${1}"
+[ -z "${verbose}" ] && verbose=false
 
 readarray -t species_array < <(tail -q -n +2 *.tsv | awk -F '\t' '{print $1}' | sort -u)
 
@@ -27,13 +28,13 @@ paste row_labels.tmp *_species_lookup.tmp > instrain_summary.tsv
 # convert names from a custom dictionary (if it has been provided)
 if [ -n "${customtaxnames}" ] ; then
   declare -A customtaxa_array
-  echo "building conversio table:"
+  [ "${verbose}" == true ] && echo "building conversion table:"
   while IFS=$'\t' read taxonin taxonout; do
     echo "$taxonin -> $taxonout"
     customtaxa_array["$taxonin"]=$taxonout
   done < ${customtaxnames}
   tail -n+2 row_labels.tmp | while read taxonin ; do
-    echo "try and replace '${taxonin}' name..." 1>&2
+    [ "${verbose}" == true ] && echo "try and replace '${taxonin}' name..." 1>&2
     trtaxon=${customtaxa_array["$taxonin"]} || echo "'${taxonin}' is not present in the dataset; skip." 1>&2
     if [ -z "${trtaxon}" ] ; then
       echo ${taxonin}
