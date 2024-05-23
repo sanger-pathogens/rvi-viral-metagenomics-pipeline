@@ -27,6 +27,7 @@ paste row_labels.tmp *_species_lookup.tmp > instrain_summary.tsv
 
 # convert names from a custom dictionary (if it has been provided)
 if [ -n "${customtaxnames}" ] ; then
+  echo ""
   declare -A customtaxa_array
   [ "${verbose}" == true ] && echo "building conversion table:"
   while IFS=$'\t' read taxonin taxonout; do
