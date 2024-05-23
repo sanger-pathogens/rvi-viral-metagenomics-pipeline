@@ -41,11 +41,13 @@ if [ -n "${customtaxnames}" ] ; then
       echo ${trtaxon}
     fi
   done > row_labels_custom.tmp
-  paste row_labels_custom.tmp *_species_lookup.tmp > instrain_summary_custom.tsv
+  paste row_labels_custom.tmp *_species_lookup.tmp > instrain_summary_tidynames.tsv
+else
+  cp instrain_summary.tsv instrain_summary_tidynames.tsv
 fi
 # sanitise the names by removing redundant substrings
 for redundanttag in ', complete genome' ', complete sequence' ' genomic sequence' ', complete cds'
-  sed -i "s|$redundanttag||g" instrain_summary_custom.tsv
+  sed -i "s|$redundanttag||g" instrain_summary_tidynames.tsv
 done
 # clean up
 rm *.tmp 
