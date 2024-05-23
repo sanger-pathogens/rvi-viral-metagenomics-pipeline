@@ -24,6 +24,7 @@ done
 cat <(echo) <(printf '%s\n' "${species_array[@]}") > row_labels.tmp
 paste row_labels.tmp *_species_lookup.tmp > instrain_summary.tsv
 
+# convert names from a custom dictionary (if it has been provided)
 if [ -n "${customtaxnames}" ] ; then
   declare -A customtaxa_array
   echo "building conversio table:"
@@ -42,5 +43,9 @@ if [ -n "${customtaxnames}" ] ; then
   done > row_labels_custom.tmp
   paste row_labels_custom.tmp *_species_lookup.tmp > instrain_summary_custom.tsv
 fi
-
+# sanitise the names by removing redundant substrings
+for redundanttag in ', complete genome' ', complete sequence' ' genomic sequence' ', complete cds'
+  sed -i "s|$redundanttag||g" instrain_summary_custom.tsv
+done
+# clean up
 rm *.tmp 
