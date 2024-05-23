@@ -32,8 +32,8 @@ if [ -n "${customtaxnames}" ] ; then
     customtaxa_array["$taxonin"]=$taxonout
   done < ${customtaxnames}
   tail -n+2 row_labels.tmp | while read taxonin ; do
-    echo "try and replace '${taxonin}' name..." 1 >& 2
-    trtaxon=${customtaxa_array["$taxonin"]} || echo "'${taxonin}' is not present in the dataset; skip." 1 >& 2
+    echo "try and replace '${taxonin}' name..." 1>&2
+    trtaxon=${customtaxa_array["$taxonin"]} || echo "'${taxonin}' is not present in the dataset; skip." 1>&2
     if [ -z "${trtaxon}" ] ; then
       echo ${taxonin}
     else
