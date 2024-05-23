@@ -26,7 +26,9 @@ paste row_labels.tmp *_species_lookup.tmp > instrain_summary.tsv
 
 if [ -n "${customtaxnames}" ] ; then
   declare -A customtaxa_array
+  echo "building conversio table:"
   while IFS=$'\t' read taxonin taxonout; do
+    echo "$taxonin -> $taxonout"
     customtaxa_array["$taxonin"]=$taxonout
   done < ${customtaxnames}
   tail -n+2 row_labels.tmp | while read taxonin ; do
