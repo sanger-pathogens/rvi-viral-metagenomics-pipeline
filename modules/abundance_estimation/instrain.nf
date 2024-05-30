@@ -67,7 +67,7 @@ process GENERATE_STB {
 process GENERATE_INSTRAIN_SUMMARY {
     label 'cpu_1'
     label 'mem_1'
-    label 'time_1'
+    label 'time_30m'
 
     publishDir "${params.outdir}/abundance_summary", mode: 'copy', overwrite: true
 
