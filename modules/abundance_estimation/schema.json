@@ -56,7 +56,7 @@
             },
             "stb_file_abundance_estimation": {
                 "default": "/lustre/scratch125/pam/data/software/gtdb/gtdb_genomes_reps_r207/gtdb_genomes_reps_r207.stb",
-                "help_text": "'Scaffold-to-Bin' table (matches assembly accessions with contig sequence accessions) for inStrain. Any custom name translation table can be used here, butit requires to cover the whole set of genomes in the refrence database."
+                "help_text": "'Scaffold-to-Bin' table (matches assembly accessions with contig sequence accessions) for inStrain. Any custom name translation table can be used here, but it must cover the whole set of genomes in the reference database."
             },
             "custom_taxon_names_abundance_estimation": {
                 "default": "",
