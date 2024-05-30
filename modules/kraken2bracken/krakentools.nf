@@ -37,7 +37,7 @@ process GENERATE_ABUNDANCE_SUMMARY {
     path("*summary_report.tsv"),  emit: abundance_summary
 
     script:
-    summary_file = "summary_report.tsv"
+    summary_file = "bracken_summary_report.tsv"
     """
     # Combine in summary file
     combine_mpa.py -i *.mpa.txt -o "${summary_file}"
