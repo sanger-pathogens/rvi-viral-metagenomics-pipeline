@@ -44,7 +44,9 @@ results/
 │       └── 48843_1#1_1_kneaddata_paired_2.fastq.gz
 ...
 ├── abundance_summary
-│   └── summary_report.tsv
+│   ├── instrain_summary_tidynames.tsv
+│   ├── instrain_summary.tsv
+│   └── bracken_summary_report.tsv
 ├── mapping_rates
 │   └── 2024-05-03T16:05:12.235708+01:00_mapping_rates.csv
 └── pipeline_info
