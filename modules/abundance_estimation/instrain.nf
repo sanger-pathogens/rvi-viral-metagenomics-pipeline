@@ -22,9 +22,9 @@ process INSTRAIN {
     tuple val(meta), path(sorted_bam), path(stb_file), path(genome_file)
 
     output:
-    path("${meta.ID}_instrain_output"), optional: true
-    path("${meta.ID}_instrain_quick_profile_output"), optional: true
-    path("${genome_info_file}"), optional: true
+    path("${meta.ID}_instrain_output"), emit: full_output, optional: true
+    path("${meta.ID}_instrain_quick_profile_output"), emit: quick_profile, optional: true
+    tuple val(meta), path("${genome_info_file}"), emit: genome_info_file, optional: true
     path(sorted_bam), emit: sorted_bam
     tuple val(meta), path("${workdir}"), emit: meta_workdir
 
@@ -41,7 +41,7 @@ process INSTRAIN {
     fi
     if ! ${params.instrain_full_output_abundance_estimation} && ! ${params.instrain_quick_profile_abundance_estimation}
     then
-        mv ${meta.ID}_instrain_output/output/${meta.ID}"_instrain_output_genome_info.tsv" ./${meta.ID}"_genome_info.tsv"
+        mv ${meta.ID}_instrain_output/output/${meta.ID}"_instrain_output_genome_info.tsv" ./${genome_info_file}
     fi
     """
 }
@@ -61,5 +61,24 @@ process GENERATE_STB {
     """
     sed 's|\$|_genomic.fna.gz|g' $sourmash_genomes > genomes.txt
     grep -w -f genomes.txt ${params.stb_file_abundance_estimation} > ${meta.ID}_gtdb_subset.stb
+    """
+}
+
+process GENERATE_INSTRAIN_SUMMARY {
+    label 'cpu_1'
+    label 'mem_1'
+    label 'time_30m'
+
+    publishDir "${params.outdir}/abundance_summary", mode: 'copy', overwrite: true
+
+    input:
+    path(genome_info_files)
+
+    output:
+    path("instrain_summary*.tsv"),  emit: instrain_summary
+
+    script:
+    """
+    ${projectDir}/bin/combine_instrain_output.sh "${params.custom_taxon_names_abundance_estimation}"
     """
 }

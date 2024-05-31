@@ -25,7 +25,7 @@ include { MERGE_FASTQS } from '../modules/abundance_estimation/merge_fastq.nf'
 include { SOURMASH_SKETCH; SOURMASH_GATHER } from '../modules/abundance_estimation/sourmash.nf'
 include { SUBSET_GTDB } from '../modules/abundance_estimation/subset_fasta.nf'
 include { BOWTIE_INDEX; BOWTIE2SAMTOOLS; GET_OVERALL_MAPPING_RATE } from '../modules/abundance_estimation/bowtie.nf'
-include { GENERATE_STB; INSTRAIN } from '../modules/abundance_estimation/instrain.nf'
+include { GENERATE_STB; INSTRAIN; GENERATE_INSTRAIN_SUMMARY } from '../modules/abundance_estimation/instrain.nf'
 
 //
 // SUBWORKFLOWS
@@ -93,8 +93,18 @@ workflow ABUNDANCE_ESTIMATION{
     GET_OVERALL_MAPPING_RATE(BOWTIE2SAMTOOLS.out.map_rate_ch.collect())
 
     if (!params.bowtie2_samtools_only_abundance_estimation) {
-        instrain_profiling_ch = BOWTIE2SAMTOOLS.out.bam_file.combine(stb_channel).combine(genomes_channel)
+        BOWTIE2SAMTOOLS.out.bam_file
+        .combine(stb_channel)
+        .combine(genomes_channel)
+        .set { instrain_profiling_ch }
+        
         INSTRAIN(instrain_profiling_ch)
+
+        INSTRAIN.out.genome_info_file
+        .collect() { it[1] }
+        .set { genome_info_files }
+
+        GENERATE_INSTRAIN_SUMMARY(genome_info_files)
     }
 
     if (params.cleanup_intermediate_files_abundance_estimation && params.bowtie2_samtools_only_abundance_estimation) {
