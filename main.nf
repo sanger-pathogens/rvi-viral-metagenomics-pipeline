@@ -45,11 +45,20 @@ workflow {
     COMBINE_IRODS
     | IRODS_EXTRACTOR
     | COMBINE_READS
-    | PREPROCESSING
+
+    if (params.skip_preprocessing){
+        COMBINE_READS.out.all_reads_ready_to_map_ch
+        .set{ reads_ch }
+    } else {
+        PREPROCESSING(COMBINE_READS.out.all_reads_ready_to_map_ch)
+
+        PREPROCESSING.out.paired_channel
+        .set{ reads_ch }
+    }
     
-    ASSEMBLE_META(PREPROCESSING.out.paired_channel)
+    ASSEMBLE_META(reads_ch)
 
-    ABUNDANCE_ESTIMATION(PREPROCESSING.out.paired_channel)
+    ABUNDANCE_ESTIMATION(reads_ch)
 
-    KRAKEN2BRACKEN(PREPROCESSING.out.paired_channel)
+    KRAKEN2BRACKEN(reads_ch)
 }

@@ -6,6 +6,12 @@
                 "default": "false",
                 "help_text": "Should logs appear in plain ASCII"
             }
+        },
+        "Top-level workflow options": {
+            "skip_preprocessing": {
+                "default": "false",
+                "help_text": "Should reads pre-processing (including Kneaddata or just Trimmomatic) be run at all? relevant if pre-processing is down upstream in a separate ppipeline"
+            }
         }
     },
     "overwrite_param": {
