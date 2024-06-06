@@ -5,6 +5,7 @@ workflow SUBSAMPLE_ITER {
 
     take:
     paired_channel // tuple val(meta), path(read_1), path(read_2)
+    subsample_limit // val(int)
 
     main:
     //if number of reads is above subsample limit put to a channel branch into a channel for subsampling
@@ -14,7 +15,7 @@ workflow SUBSAMPLE_ITER {
         meta_new = [:]
         meta_new = meta
         meta_new.total_reads = read_count
-        needs_subsampling: meta_new.total_reads > params.subsample_limit
+        needs_subsampling: meta_new.total_reads > subsample_limit
             return tuple ( meta, read_1, read_2 )
         already_below_subsample: true
             return tuple ( meta, read_1, read_2 )

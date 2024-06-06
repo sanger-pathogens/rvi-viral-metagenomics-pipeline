@@ -2,6 +2,10 @@
     "pipeline": "Metagenome assembly (metaSPAdes) sub-workflow",
     "params": {
         "Metagenome assembly options": {
+            "metaspades_subsample_limit": {
+                "default": 500000,
+                "help_text": "minimum number of total reads (i.e. summing counts in both paired-end read files) to trigger read subsampling ahead of metagenome assembly"
+            },
             "metaspades_base_mem_gb": {
                 "default": 4,
                 "help_text": "memmory in GB from which the METASPADES process will start iterating, doubling at every retry when failed for insufficient memory"

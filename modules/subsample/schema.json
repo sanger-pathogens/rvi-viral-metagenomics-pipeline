@@ -2,10 +2,6 @@
     "pipeline": "Read sub-sampling (SeqTk) sub-workflow",
     "params": {
         "Subsampling options": {
-            "subsample_limit": {
-                "default": 500000,
-                "help_text": "minimum number of total reads (i.e. summing counts in both paired-end read files) to trigger read subsampling"
-            },
             "subsample_iterations": {
                 "default": 1,
                 "help_text": "number of iterations required for read subsampling, each randomly drawing reads from the input file"
