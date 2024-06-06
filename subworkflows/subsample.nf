@@ -23,12 +23,14 @@ workflow SUBSAMPLE_ITER {
 
     iteration_seeds = seed_list()
 
-    SUBSAMPLE_SEQTK(subsampling_check.needs_subsampling, iteration_seeds)
+    SUBSAMPLE_SEQTK(subsampling_check.needs_subsampling, subsample_limit, iteration_seeds)
 
     //map to add _subsampled-$n before mix into ID so non-subsampled do not have iterations
     SUBSAMPLE_SEQTK.out.read_ch.map{ meta, read_1, read_2, seed, iteration ->
+        def num_limit = subsample_limit.toString()
+        shortstr_limit = num_limit.replaceFirst("000000000", "G").replaceFirst("000000", "M").replaceFirst("000", "k")
         meta_new = [:]
-        meta_new.ID = "${meta.ID}_subsampled-${iteration}"
+        meta_new.ID = "${meta.ID}_subsampled${shortstr_limit}-${iteration}"
         [meta_new, read_1, read_2]
     }.mix(subsampling_check.already_below_subsample).set{ final_read_channel }
 
