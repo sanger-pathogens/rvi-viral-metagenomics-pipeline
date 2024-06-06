@@ -47,25 +47,24 @@ workflow {
     | IRODS_EXTRACTOR
     | COMBINE_READS
 
-    if (params.skip_preprocessing){
-        COMBINE_READS.out.all_reads_ready_to_map_ch
-        .set{ reads_ch }
-    } else {
-        PREPROCESSING(COMBINE_READS.out.all_reads_ready_to_map_ch)
-
-        PREPROCESSING.out.paired_channel
-        .set{ reads_ch }
-    }
-
     initial_subsample_limit_ch = Channel.value( params.initial_subsample_limit ) 
-    SUBSAMPLE_ITER(reads_ch, initial_subsample_limit_ch)
+    SUBSAMPLE_ITER(COMBINE_READS.out.all_reads_ready_to_map_ch, initial_subsample_limit_ch)
 
     SUBSAMPLE_ITER.out.final_read_channel
     .set{ capped_reads_ch }
 
-    ASSEMBLE_META(capped_reads_ch)
+    if (params.skip_preprocessing){
+        capped_reads_ch = ready_reads_ch
+    } else {
+        PREPROCESSING(capped_reads_ch)
 
-    ABUNDANCE_ESTIMATION(capped_reads_ch)
+        PREPROCESSING.out.paired_channel
+        .set{ ready_reads_ch }
+    }
 
-    KRAKEN2BRACKEN(capped_reads_ch)
+    ASSEMBLE_META(ready_reads_ch)
+
+    ABUNDANCE_ESTIMATION(ready_reads_ch)
+
+    KRAKEN2BRACKEN(ready_reads_ch)
 }
