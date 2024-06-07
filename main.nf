@@ -47,7 +47,7 @@ workflow {
     | IRODS_EXTRACTOR
     | COMBINE_READS
 
-    initial_subsample_limit_ch = Channel.of( params.initial_subsample_limit ) 
+    initial_subsample_limit_ch = Channel.value( params.initial_subsample_limit ) 
     SUBSAMPLE_ITER(COMBINE_READS.out.all_reads_ready_to_map_ch, initial_subsample_limit_ch)
 
     SUBSAMPLE_ITER.out.final_read_channel
