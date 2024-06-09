@@ -1,10 +1,10 @@
 process SUBSAMPLE_SEQTK {
     tag "${meta.ID}"
     label 'cpu_1'
-    label 'mem_500M'
+    label 'mem_4'
     label 'time_1'
 
-    publishDir "${params.outdir}/${meta.ID}/subsampled_iteration_${iteration}", mode: 'copy', overwrite: true, pattern: "*log.txt"
+    publishDir "${params.outdir}/${meta.ID}/subsampled_${subsample_limit}_iteration_${iteration}", mode: 'copy', overwrite: true, pattern: "*log.txt"
 
     container 'quay.io/biocontainers/seqtk:1.3--ha92aebf_0'
     // more recent options are available:
