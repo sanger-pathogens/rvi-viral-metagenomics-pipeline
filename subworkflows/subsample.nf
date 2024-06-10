@@ -1,5 +1,4 @@
 include { SUBSAMPLE_SEQTK } from '../modules/subsample/seqtk.nf'
-include { seed_list } from '../modules/subsample/subsample_utils.nf'
 
 workflow SUBSAMPLE_ITER {
 
@@ -22,12 +21,12 @@ workflow SUBSAMPLE_ITER {
             return tuple ( meta, read_1, read_2 )
     }.set{ subsampling_check }
 
-    iteration_seeds = seed_list()
+    iterations = (1 .. params.subsample_iterations).toList()
 
-    SUBSAMPLE_SEQTK(subsampling_check.needs_subsampling, subsample_limit_ch, iteration_seeds)
+    SUBSAMPLE_SEQTK(subsampling_check.needs_subsampling, subsample_limit_ch, iterations)
 
     //map to add _subsampled-$n before mix into ID so non-subsampled do not have iterations
-    SUBSAMPLE_SEQTK.out.read_ch.map{ meta, read_1, read_2, seed, iteration ->
+    SUBSAMPLE_SEQTK.out.read_ch.map{ meta, read_1, read_2, seed, iteration, subsample_limit ->
         def num_limit = subsample_limit.toString()
         shortstr_limit = num_limit.replaceFirst("000000000", "G").replaceFirst("000000", "M").replaceFirst("000", "k")
         meta_new = [:]

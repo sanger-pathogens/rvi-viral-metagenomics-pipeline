@@ -14,16 +14,16 @@ process SUBSAMPLE_SEQTK {
     input:
     tuple val(meta), path(read_1), path(read_2)
     val(subsample_limit)
-    each(seed)
+    each(iteration)
 
     output:
-    tuple val(meta), path(subsampled_1), path(subsampled_2), val(seed), val(iteration),  emit: read_ch
+    tuple val(meta), path(subsampled_1), path(subsampled_2), val(seed), val(iteration), val(subsample_limit), emit: read_ch
     path("seqtk_log.txt")
 
     script:
     subsampled_1 = "${meta.ID}_subsampled_1.fastq"
     subsampled_2 = "${meta.ID}_subsampled_2.fastq"
-    iteration = seed - params.subsample_seed + 1
+    seed = iteration + params.subsample_seed - 1
     """
     seqtk sample -s${seed} ${read_1} ${subsample_limit} > ${subsampled_1}
     seqtk sample -s${seed} ${read_2} ${subsample_limit} > ${subsampled_2}
