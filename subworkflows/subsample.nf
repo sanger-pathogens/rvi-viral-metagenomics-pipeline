@@ -12,10 +12,7 @@ workflow SUBSAMPLE_ITER {
     paired_channel.combine(subsample_limit_ch)
     .branch{ meta, read_1, read_2, subsample_limit ->
         def read_count = read_1.countFastq()
-        meta_new = [:]
-        meta_new = meta
-        meta_new.total_reads = read_count
-        needs_subsampling: meta_new.total_reads > subsample_limit
+        needs_subsampling: read_count > subsample_limit
             return tuple ( meta, read_1, read_2 )
         already_below_subsample: true
             return tuple ( meta, read_1, read_2 )
