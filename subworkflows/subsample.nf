@@ -28,7 +28,7 @@ workflow SUBSAMPLE_ITER {
     //map to add _subsampled-$n before mix into ID so non-subsampled do not have iterations
     SUBSAMPLE_SEQTK.out.read_ch.map{ meta, read_1, read_2, seed, iteration, subsample_limit ->
         def num_limit = subsample_limit.toString()
-        shortstr_limit = num_limit.replaceFirst("000000000$", "G").replaceFirst("000000$", "M").replaceFirst("000$", "k")
+        shortstr_limit = num_limit.replaceFirst(/000000000$/, "G").replaceFirst(/000000$/, "M").replaceFirst(/000$/, "k")
         meta_new = [:]
         meta_new.ID = "${meta.ID}_subsampled${shortstr_limit}-${iteration}"
         [meta_new, read_1, read_2]
