@@ -1,6 +1,6 @@
 process KNEADDATA {
     tag "${meta.ID}"
-    label 'mem_4'
+    label 'mem_8'
     label 'time_12'
     cpus { task.attempt > 1 ? 1 : params.kneaddata_threads }
 
