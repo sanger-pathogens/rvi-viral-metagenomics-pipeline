@@ -27,8 +27,8 @@ process KNEADDATA {
     kd_log = "${meta.ID}_1_kneaddata.log"
     """
     kneaddata -t ${task.cpus} -p 2 -i1 ${R1} -i2 ${R2} -db ${params.off_target_db} --output . --sequencer-source ${params.sequencer_source} \
-    --trimmomatic-options "${params.trimmomatic_options}" --reorder \
-    && gzip -c ${output_1} > ${output_1}.gz \
-    && gzip -c ${output_2} > ${output_2}.gz
+    --trimmomatic-options "${params.trimmomatic_options}" --reorder
+    gzip -c ${output_1} > ${output_1}.gz
+    gzip -c ${output_2} > ${output_2}.gz
     """
 }  
