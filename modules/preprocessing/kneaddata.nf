@@ -18,16 +18,23 @@ process KNEADDATA {
     path(kd_log), emit: kd_log_ch
 
     script:
-    output_1 = "${meta.ID}_1_kneaddata_paired_1.fastq"
-    output_2 = "${meta.ID}_1_kneaddata_paired_2.fastq"
+    id_kd = "${meta.ID}_1_kneaddata"
+    output_1 = "${id_kd}_paired_1.fastq"
+    output_2 = "${id_kd}_paired_2.fastq"
     output_1_gz = "${output_1}.gz"
     output_2_gz = "${output_2}.gz"
-    output_unmatched_1 = "${meta.ID}_1_kneaddata_unmatched_1.fastq"
-    output_unmatched_2 = "${meta.ID}_1_kneaddata_unmatched_2.fastq"
-    kd_log = "${meta.ID}_1_kneaddata.log"
+    output_unmatched_1 = "${id_kd}_unmatched_1.fastq"
+    output_unmatched_2 = "${id_kd}_unmatched_2.fastq"
+    kd_log = "${id_kd}.log"
     """
-    kneaddata -t ${task.cpus} -p 2 -i1 ${R1} -i2 ${R2} -db ${params.off_target_db} --output . --sequencer-source ${params.sequencer_source} \
-    --trimmomatic-options "${params.trimmomatic_options}" --reorder
+    ln -s ${R1} ${id_kd}_1.fastq
+    ln -s ${R2} ${id_kd}_2.fastq
+    kneaddata -t ${task.cpus} -p 2 -i1 ${id_kd}_1.fastq -i2 ${id_kd}_2.fastq \
+    -db ${params.off_target_db} \
+    --output . \
+    --sequencer-source ${params.sequencer_source} \
+    --trimmomatic-options "${params.trimmomatic_options}" \
+    --reorder
     gzip -c ${output_1} > ${output_1}.gz
     gzip -c ${output_2} > ${output_2}.gz
     """
