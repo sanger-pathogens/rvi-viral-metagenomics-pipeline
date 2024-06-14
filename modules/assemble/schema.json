@@ -8,7 +8,7 @@
             },
             "metaspades_base_mem_gb": {
                 "default": 4,
-                "help_text": "memmory in GB from which the METASPADES process will start iterating, doubling at every retry when failed for insufficient memory"
+                "help_text": "Memory (in GB) from which the METASPADES process will start iterating, doubling at every retry when failed for insufficient memory."
             }
         }
     }
