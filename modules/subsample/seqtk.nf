@@ -1,7 +1,7 @@
 process SUBSAMPLE_SEQTK {
     tag "${meta.ID}"
     label 'cpu_1'
-    label 'mem_1'
+    label 'mem_1' // memory use is determined when using seqtk sample with -2 flag; subsample_limit of 10M results in 222MB peak vmem
     label 'time_1'
 
     publishDir "${params.outdir}/${meta.ID}/subsampled_${subsample_limit}_iteration_${iteration}", mode: 'copy', overwrite: true, pattern: "*log.txt"
