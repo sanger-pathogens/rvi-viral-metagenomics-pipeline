@@ -18,6 +18,8 @@ process KNEADDATA {
     path(kd_log), emit: kd_log_ch
 
     script:
+    input_1_gz = "${meta.ID}_1.fastq.gz"
+    input_2_gz = "${meta.ID}_2.fastq.gz"
     id_kdout = "${meta.ID}_1_kneaddata"
     output_1 = "${id_kdout}_paired_1.fastq"
     output_2 = "${id_kdout}_paired_2.fastq"
@@ -27,9 +29,9 @@ process KNEADDATA {
     output_unmatched_2 = "${id_kdout}_unmatched_2.fastq"
     kd_log = "${id_kdout}.log"
     """
-    ln -s ${R1} ${meta.ID}_1.fastq
-    ln -s ${R2} ${meta.ID}_2.fastq
-    kneaddata -t ${task.cpus} -p 2 -i1 ${meta.ID}_1.fastq -i2 ${meta.ID}_2.fastq \
+    ln -s ${R1} ${input_1_gz}
+    ln -s ${R2} ${input_2_gz}
+    kneaddata -t ${task.cpus} -p 2 -i1 ${input_1_gz} -i2 ${input_2_gz} \
     -db ${params.off_target_db} \
     --output . \
     --sequencer-source ${params.sequencer_source} \
