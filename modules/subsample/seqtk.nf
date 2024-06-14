@@ -21,8 +21,8 @@ process SUBSAMPLE_SEQTK {
     path("seqtk_log.txt")
 
     script:
-    subsampled_1 = "${meta.ID}_subsampled_1.fastq"
-    subsampled_2 = "${meta.ID}_subsampled_2.fastq"
+    subsampled_1 = "${meta.ID}_subsampled_1.fastq.gz"
+    subsampled_2 = "${meta.ID}_subsampled_2.fastq.gz"
     seed = iteration + params.subsample_seed - 1
     """
     seqtk sample -s${seed} ${read_1} ${subsample_limit} | gzip > ${subsampled_1}
