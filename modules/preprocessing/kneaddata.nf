@@ -1,6 +1,6 @@
 process KNEADDATA {
     tag "${meta.ID}"
-    label 'mem_4'
+    label 'mem_8'
     label 'time_12'
     cpus { task.attempt > 1 ? 1 : params.kneaddata_threads }
 
@@ -18,16 +18,25 @@ process KNEADDATA {
     path(kd_log), emit: kd_log_ch
 
     script:
-    output_1 = "${meta.ID}_1_kneaddata_paired_1.fastq"
-    output_2 = "${meta.ID}_1_kneaddata_paired_2.fastq"
+    input_1_gz = "${meta.ID}_1.fastq.gz"
+    input_2_gz = "${meta.ID}_2.fastq.gz"
+    id_kdout = "${meta.ID}_1_kneaddata"
+    output_1 = "${id_kdout}_paired_1.fastq"
+    output_2 = "${id_kdout}_paired_2.fastq"
     output_1_gz = "${output_1}.gz"
     output_2_gz = "${output_2}.gz"
-    output_unmatched_1 = "${meta.ID}_1_kneaddata_unmatched_1.fastq"
-    output_unmatched_2 = "${meta.ID}_1_kneaddata_unmatched_2.fastq"
-    kd_log = "${meta.ID}_1_kneaddata.log"
+    output_unmatched_1 = "${id_kdout}_unmatched_1.fastq"
+    output_unmatched_2 = "${id_kdout}_unmatched_2.fastq"
+    kd_log = "${id_kdout}.log"
     """
-    kneaddata -t ${task.cpus} -p 2 -i1 ${R1} -i2 ${R2} -db ${params.off_target_db} --output . --sequencer-source ${params.sequencer_source} \
-    --trimmomatic-options "${params.trimmomatic_options}" --reorder
+    [ -e ${input_1_gz} ] || ln -s ${R1} ${input_1_gz}
+    [ -e ${input_2_gz} ] || ln -s ${R2} ${input_2_gz}
+    kneaddata -t ${task.cpus} -p 2 -i1 ${input_1_gz} -i2 ${input_2_gz} \
+    -db ${params.off_target_db} \
+    --output . \
+    --sequencer-source ${params.sequencer_source} \
+    --trimmomatic-options "${params.trimmomatic_options}" \
+    --reorder
     gzip -c ${output_1} > ${output_1}.gz
     gzip -c ${output_2} > ${output_2}.gz
     """

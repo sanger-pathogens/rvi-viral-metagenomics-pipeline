@@ -6,6 +6,16 @@
                 "default": "false",
                 "help_text": "Should logs appear in plain ASCII"
             }
+        },
+        "Top-level workflow options": {
+            "skip_preprocessing": {
+                "default": "false",
+                "help_text": "Should reads pre-processing (including Kneaddata or just Trimmomatic) be run at all? Relevant if pre-processing is done upstream in a separate pipeline."
+            },
+            "metaspades_subsample_limit": {
+                "default": 10000000,
+                "help_text": "minimum number of reads (in a single paired-end read file, so double that for total counts when summing from both files) to trigger read subsampling ahead of any pipeline step, including pre-processing."
+            }
         }
     },
     "overwrite_param": {

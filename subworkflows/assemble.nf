@@ -7,7 +7,8 @@ workflow ASSEMBLE_META {
     meta_reads // tuple val(meta), path(R1), path(R2)
 
     main:
-    SUBSAMPLE_ITER(meta_reads)
+    metaspades_subsample_limit_ch = Channel.value( params.metaspades_subsample_limit ) 
+    SUBSAMPLE_ITER(meta_reads, metaspades_subsample_limit_ch)
     | METASPADES
 
 
