@@ -4,7 +4,7 @@
         "Metagenome assembly options": {
             "metaspades_subsample_limit": {
                 "default": 500000,
-                "help_text": "minimum number of reads (in a single paired-end read file, so double that for total counts when summing from both files) to trigger read subsampling ahead of metagenome assembly"
+                "help_text": "Minimum number of reads in a single paired-end read file (double that for total read counts) to trigger read subsampling ahead of metagenome assembly."
             },
             "metaspades_base_mem_gb": {
                 "default": 4,
