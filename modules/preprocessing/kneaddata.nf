@@ -29,8 +29,8 @@ process KNEADDATA {
     output_unmatched_2 = "${id_kdout}_unmatched_2.fastq"
     kd_log = "${id_kdout}.log"
     """
-    ln -s ${R1} ${input_1_gz}
-    ln -s ${R2} ${input_2_gz}
+    [ -e ${input_1_gz} ] || ln -s ${R1} ${input_1_gz}
+    [ -e ${input_2_gz} ] || ln -s ${R2} ${input_2_gz}
     kneaddata -t ${task.cpus} -p 2 -i1 ${input_1_gz} -i2 ${input_2_gz} \
     -db ${params.off_target_db} \
     --output . \
