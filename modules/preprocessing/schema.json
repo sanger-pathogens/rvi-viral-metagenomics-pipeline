@@ -24,7 +24,7 @@
             },
             "publish_trimmed_reads": {
                 "default": "true",
-                "help_text": "should the compressed fastq files for the reads trimmed and filterred by Kdeadata or just Trimmomatic (depending on --human_read_removal setting) be written out in the 'trimmed_reads/' folder?"
+                "help_text": "should the compressed fastq files for the reads trimmed and filterred by Kneaddata or just Trimmomatic (depending on --human_read_removal setting) be written out in the 'trimmed_reads/' folder?"
             }
         }
     }
