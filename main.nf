@@ -54,7 +54,7 @@ workflow {
     .set{ capped_reads_ch }
 
     if (params.skip_preprocessing){
-        capped_reads_ch = ready_reads_ch
+        ready_reads_ch = capped_reads_ch
     } else {
         PREPROCESSING(capped_reads_ch)
 
