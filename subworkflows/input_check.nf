@@ -12,7 +12,6 @@ workflow INPUT_CHECK {
         .ifEmpty {exit 1, log.info "Cannot find path file ${manifest}"}
         .splitCsv ( header:true, sep:',' )
         .map { create_read_channels(it) }
-        .map { meta, R1 , R2 -> [ meta, R1 , R2 ]}
         .filter{ meta, R1 , R2 -> R1 != 'NA' }
         .set { paired_reads }
 
