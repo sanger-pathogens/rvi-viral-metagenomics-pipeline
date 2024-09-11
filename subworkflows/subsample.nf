@@ -38,7 +38,6 @@ def fastqCount(List reads) {
 }
 
 workflow SUBSAMPLE_ITER {
-
     take:
     paired_channel // tuple val(meta), path(read_1), path(read_2)
     subsample_limit_ch // val(int)
@@ -49,12 +48,17 @@ workflow SUBSAMPLE_ITER {
     def readCount = fastqCount([read_1, read_2])
     [ meta, read_1, read_2, readCount]
     }
-    | filter { it[3] > params.minimum_fastq_reads } //filter the readCount to be above minimum (set to 0 to start)
+    | branch { 
+        passed: it[3] > params.minimum_fastq_reads 
+        errors: it[3] == -1
+    } //filter the readCount to be above minimum (set to 0 to start)
     | set{ fastQPass_ch }
+
+    fastQPass_ch.errors.count().map{ it -> if (it > 0) { System.exit(1) } }
 
     //if number of reads is above subsample limit put to a channel branch into a channel for subsampling
     //if below limit branch into a seperate channel where no subsampling is done and instead skips the step
-    fastQPass_ch.combine(subsample_limit_ch)
+    fastQPass_ch.passed.combine(subsample_limit_ch)
     .branch{ meta, read_1, read_2, read_count, subsample_limit ->
         needs_subsampling: read_count > subsample_limit
             return tuple ( meta, read_1, read_2 )
