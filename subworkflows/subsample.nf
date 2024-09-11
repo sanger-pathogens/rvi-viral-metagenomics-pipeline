@@ -18,7 +18,7 @@ def fastqCount(List reads) {
         } catch (Exception e) { 
             //fallback incase other error
             log.error("Unexpected error reading Fastq ${read}: ${e}")
-            System.exit(1) or other error handling
+            System.exit(1)
         }
     }
 
