@@ -1,5 +1,23 @@
 include { SUBSAMPLE_SEQTK } from '../modules/subsample/seqtk.nf'
 
+def fastqCount(read_1, read_2) {
+    try {
+        def read1Count = read_1.countFastq()
+        def read2Count = read_2.countFastq()
+
+        if (read1Count != read2Count) {
+            log.error("Fastq pairs uneven: ${read_1}, ${read_2}")
+            System.exit(1)
+        }
+        
+        return read1Count
+    
+    } catch (Exception e) {
+        log.error("Fastq could not be read: ${read_1}, ${read_2}")
+        System.exit(1)
+    }
+}
+
 workflow SUBSAMPLE_ITER {
 
     take:
@@ -7,11 +25,13 @@ workflow SUBSAMPLE_ITER {
     subsample_limit_ch // val(int)
 
     main:
+
+    paired_channel.map{ meta, read_1, read_2 -> [ meta, read_1, read_2, fastqCount(read_1, read_2)]}.set{ fastQPass_ch }
+
     //if number of reads is above subsample limit put to a channel branch into a channel for subsampling
     //if below limit branch into a seperate channel where no subsampling is done and instead skips the step
-    paired_channel.combine(subsample_limit_ch)
-    .branch{ meta, read_1, read_2, subsample_limit ->
-        def read_count = read_1.countFastq()
+    fastQPass_ch.combine(subsample_limit_ch)
+    .branch{ meta, read_1, read_2, read_count, subsample_limit ->
         needs_subsampling: read_count > subsample_limit
             return tuple ( meta, read_1, read_2 )
         already_below_subsample: true

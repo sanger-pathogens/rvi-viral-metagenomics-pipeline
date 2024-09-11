@@ -36,10 +36,6 @@ workflow {
         printHelp()
         exit 0
     }
-    if (params.help_all) {
-        printHelpAll()
-        exit 0
-    }
 
     validate_parameters()
 
