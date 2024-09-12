@@ -60,9 +60,14 @@ workflow VERIFY_FASTQ {
     }
     | set{ fastQPass_ch }
 
-    fastQPass_ch.belowReadCount
-    | map{ it -> log.error("Fastq counts are below limit ${params.minimum_fastq_reads} and so are excluded - ${it[0]}: ${it[3]}") }
-
+    if (params.fastq_error_handling_mode == 'only_unreadable') {
+        fastQPass_ch.belowReadCount
+        | map{ it -> log.warn("Fastq counts are below limit ${params.minimum_fastq_reads} and so are excluded - ${it[0]}: ${it[3]}") }
+    } else {
+        fastQPass_ch.belowReadCount
+        | map{ it -> log.error("Fastq counts are below limit ${params.minimum_fastq_reads} and so are excluded - ${it[0]}: ${it[3]}") }
+    }
+    
     def errors = (params.fastq_error_handling_mode == 'only_unreadable') ?  fastQPass_ch.errors : fastQPass_ch.belowReadCount.mix(fastQPass_ch.errors)
 
     if (params.fastq_error_handling_mode != 'ignore') {
