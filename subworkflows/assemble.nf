@@ -1,4 +1,3 @@
-include { VERIFY_FASTQ } from './verify_fastq.nf'
 include { SUBSAMPLE_ITER } from './subsample.nf'
 include { METASPADES } from '../modules/assemble/metaspades.nf'
 
