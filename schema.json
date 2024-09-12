@@ -16,7 +16,13 @@
                 "default": 10000000,
                 "help_text": "minimum number of reads (in a single paired-end read file, so double that for total counts when summing from both files) to trigger read subsampling ahead of any pipeline step, including pre-processing."
             }
-        }
+        },
+        "Error options": {
+            "fastq_error_handling_mode": {
+                "default": "exit_on_error" ,
+                "help_text": "three levels of how to handle fastq errors:\n\t\t\texit_on_error: exit if there are any samples unreadable or below the limit\n\t\t\tonly_unreadable: Only exit if there are samples that are unreadable\n\t\t\tignore: entirely ignore samples that have errors and continue the pipeline"
+            }
+        },
     },
     "overwrite_param": {
         "cleanup_intermediate_files_irods_extractor": {
