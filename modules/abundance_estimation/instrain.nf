@@ -29,9 +29,10 @@ process INSTRAIN_PROFILE {
         grep "Exception: No paired reads detected" instrain.err && cat instrain.err 1>&2 && exit 2
         # if not caught known exception, process should not have exited yet - do it now spitting back the stored stderr and exit status
         cat instrain.err 1>&2 && exit \${status}
+    else
+        cat instrain.err 1>&2
     fi
-    if ! ${params.instrain_full_output_abundance_estimation}
-    then
+    if [ ! ${params.instrain_full_output_abundance_estimation} ] ; then
         mv ${meta.ID}_instrain_output/output/${meta.ID}"_instrain_output_genome_info.tsv" ./${genome_info_file}
     fi
     """
