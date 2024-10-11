@@ -97,15 +97,23 @@ workflow ABUNDANCE_ESTIMATION{
         .combine(stb_channel)
         .combine(genomes_channel)
         .set { instrain_profiling_ch }
-        
-        INSTRAIN(instrain_profiling_ch)
 
         if (!params.instrain_quick_profile_abundance_estimation){
-            INSTRAIN.out.genome_info_file
+            INSTRAIN_PROFILE(instrain_profiling_ch)
+
+            INSTRAIN_PROFILE.out.genome_info_file
             .collect() { it[1] }
             .set { genome_info_files }
 
+            INSTRAIN_PROFILE.out.meta_workdir
+            .set { instrain_meta_workdir_ch } 
+
             GENERATE_INSTRAIN_SUMMARY(genome_info_files)
+        }else{
+            INSTRAIN_QUICKPROFILE(instrain_profiling_ch)
+
+            INSTRAIN_QUICKPROFILE.out.meta_workdir
+            .set { instrain_meta_workdir_ch } 
         }
     }
 
@@ -118,6 +126,6 @@ workflow ABUNDANCE_ESTIMATION{
     }
 
     if (params.cleanup_intermediate_files_abundance_estimation && !params.bowtie2_samtools_only_abundance_estimation) {
-        CLEANUP_INSTRAIN_OUTPUT(INSTRAIN.out.meta_workdir)
+        CLEANUP_INSTRAIN_OUTPUT(instrain_meta_workdir_ch)
     }
 }
