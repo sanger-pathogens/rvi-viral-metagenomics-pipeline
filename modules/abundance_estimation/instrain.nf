@@ -24,6 +24,7 @@ process INSTRAIN_PROFILE {
     pwd > workdir.txt
     inStrain profile ${sorted_bam} ${genome_file} -o ${meta.ID}_instrain_output -p ${task.cpus} -s ${stb_file} --skip_plot_generation ${params.instrain_profile_options} 2> instrain.err
     status=\${?}
+    sleep 10s
     if [ \${status} -gt 0 ] ; then
         # try and catch known exceptions from the stored stderr stream
         grep "Exception: No paired reads detected" instrain.err && cat instrain.err 1>&2 && exit 2
