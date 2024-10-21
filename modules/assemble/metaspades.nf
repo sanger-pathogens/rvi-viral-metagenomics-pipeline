@@ -25,7 +25,7 @@ process METASPADES {
     if [ \${status} -gt 0 ] ; then
         # try and catch known errors from the stored stdout stream ; cannot rely on spades.log file as this is not always created in time
         ## empty input read file - exit 7
-        grep '== Error ==  file is empty' spades.out && cat spades.out && exit7
+        grep '== Error ==  file is empty' spades.out && cat spades.out && exit 7
         ## segmentation fault, possibly due to farm environment and spades not being compiled against the machine/in the singularity container - exit 3
         grep '== Error ==  system call for:.\\+/usr/local/bin/spades-hammer.\\+finished abnormally' spades.out 1>&2 && cat spades.out && exit 3
         # if not caught known exception, process should not have exited yet - do it now with stored metaspades exit status
