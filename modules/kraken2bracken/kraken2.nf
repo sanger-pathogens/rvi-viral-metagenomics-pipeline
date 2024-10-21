@@ -13,7 +13,7 @@ process KRAKEN2 {
 
     output:
     tuple val(meta), path("${kreportout}"),  emit: kraken2_report
-    tuple val(meta), path("${ksamreporttag}"),  emit: kraken2_sample_report
+    tuple val(meta), path("${ksamreportout}"),  emit: kraken2_sample_report
 
     script:
     kreportout = "${meta.ID}_kraken_report.tsv"
