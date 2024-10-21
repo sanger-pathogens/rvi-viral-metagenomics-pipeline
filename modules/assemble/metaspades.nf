@@ -24,18 +24,18 @@ process METASPADES {
     status=\${?}
     if [ \${status} -gt 0 ] ; then
         # try and catch known errors from the stored stdout stream ; cannot rely on spades.log file as this is not always created in time
-        ## empty input read file - exit 2
-        grep '== Error ==  file is empty' spades.out && cat spades.out && exit 2
+        ## empty input read file - exit 7
+        grep '== Error ==  file is empty' spades.out && cat spades.out && exit7
         ## segmentation fault, possibly due to farm environment and spades not being compiled against the machine/in the singularity container - exit 3
         grep '== Error ==  system call for:.\\+/usr/local/bin/spades-hammer.\\+finished abnormally' spades.out 1>&2 && cat spades.out && exit 3
         # if not caught known exception, process should not have exited yet - do it now with stored metaspades exit status
         cat spades.out && exit \${status}
     else
         # try and catch known warnings from the stored stdout stream when not causing non-zero exit code
-        ## empty output contigs.fasta file and no scaffold file, often meaning low read input - exit 2
+        ## empty output contigs.fasta file and no scaffold file, often meaning low read input - exit 7
         grep '======= SPAdes pipeline finished WITH WARNINGS!' spades.out 1>&2 \
           && grep ' * Assembled contigs are in .\\+contigs.fasta' spades.out 1>&2 \
-          && [ ! -s contigs.fasta ] && cat spades.out && exit 2
+          && [ ! -s contigs.fasta ] && cat spades.out && exit 7
         # NB: in case scaffolds.fasta file is missing not due to the above, nextflow will error out as expecting it as ouput file
         cat spades.out
     fi

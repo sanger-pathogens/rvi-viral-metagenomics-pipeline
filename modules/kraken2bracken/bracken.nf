@@ -26,7 +26,7 @@ process BRACKEN {
     status=\${?}
     if [ \${status} -gt 0 ] ; then
         # try and catch known exceptions from the stored stderr stream
-        grep 'Error: no reads found. Please check your Kraken report' bracken.err && cat bracken.err 1>&2 && exit 2
+        grep 'Error: no reads found. Please check your Kraken report' bracken.err && cat bracken.err 1>&2 && exit 7
         # if not caught known exception, process should not have exited yet - do it now spitting back the stored stderr and exit status
         cat bracken.err 1>&2 && exit \${status}
     else
