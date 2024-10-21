@@ -26,7 +26,7 @@ process INSTRAIN_PROFILE {
     status=\${?}
     if [ \${status} -gt 0 ] ; then
         # try and catch known exceptions from the stored stderr stream
-        grep "Exception: No paired reads detected" instrain.err && cat instrain.err 1>&2 && exit 2
+        grep "Exception: No paired reads detected" instrain.err && cat instrain.err 1>&2 && exit 7
         # if not caught known exception, process should not have exited yet - do it now spitting back the stored stderr and exit status
         cat instrain.err 1>&2 && exit \${status}
     else
