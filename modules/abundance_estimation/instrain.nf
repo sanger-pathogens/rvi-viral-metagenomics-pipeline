@@ -59,7 +59,7 @@ process INSTRAIN_QUICKPROFILE {
     script:
     workdir="workdir.txt"
     """
-    pwd > workdir.txt
+    pwd > "${workdir}"
     inStrain quick_profile ${sorted_bam} ${genome_file} -o ${meta.ID}_instrain_quick_profile_output -p ${task.cpus} -s ${stb_file}
     """
 }
