@@ -12,8 +12,8 @@ process KRAKEN2 {
     tuple val(meta), path(reads_1), path(reads_2), path(kraken2_db)
 
     output:
-    tuple val(meta), path("${kreportout}"),  emit: kraken2_report
-    tuple val(meta), path("${ksamreportout}"),  emit: kraken2_sample_report
+    tuple val(meta), path(kreportout),  emit: kraken2_report
+    tuple val(meta), path(ksamreportout),  emit: kraken2_sample_report
 
     script:
     kreportout = "${meta.ID}_kraken_report.tsv"
