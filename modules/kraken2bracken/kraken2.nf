@@ -30,7 +30,7 @@ process KRAKEN2 {
     if [ \${status} -gt 0 ] ; then
         # try and catch known errors from the stored stdout stream
         ## none known so far; keep this for potential future cases
-        # if not caught known exception, process should not have exited yet - do it now with stored metaspades exit status
+        # if not caught known exception, process should not have exited yet - do it now with stored exit status
         cat kraken2.err 1>&2 && exit \${status}
     else
         # try and catch known warnings from the stored stdout stream when not causing non-zero exit code
