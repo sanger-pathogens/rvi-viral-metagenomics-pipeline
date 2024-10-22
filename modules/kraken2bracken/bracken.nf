@@ -22,7 +22,8 @@ process BRACKEN {
                                         -k ${kmer_distrib} \
                                         -o ${meta.ID}.bracken \
                                         -l ${params.kraken2bracken_classification_level} \
-                                        -t ${params.kraken2bracken_threshold} 2> bracken.err
+                                        -t ${params.kraken2bracken_threshold} \
+                                        2> bracken.err
     status=\${?}
     if [ \${status} -gt 0 ] ; then
         # try and catch known exceptions from the stored stderr stream
