@@ -58,6 +58,12 @@ results/
 
 Nextflow trace and other files describing the execution of the pipeline per sample and per process will be written in the `results/pipeline_info/` directory by default. 
 
+The exit codes returned by the processes as reported in the trace file can help understand what may have caused some process failures. In particular, this pipeline catches errors from Kraken2, Bracken, metaSPAdes and inStrain that are due to no reads or too few reads being present in the input reads files; in these case, the process will fail but exit with an error code 7.
+
+Custom error codes:
+- 7: no reads or too few reads in input
+- 3: known segmentation fault error in metaSPAdes
+
 A metadata file describing the data downloaded from IRODS will be written under the output folder. This metadata includes a path to the data on iRODS for later targeted retrieval as well as basic information such as read count in the CRAM file, reference used for CRAM compression, as well as sample name, ENA run/sample accession etc.
 
 In the output folder you should also find one folder per Lane_ID, which will feature a folder for each of the analyses undertaken:
