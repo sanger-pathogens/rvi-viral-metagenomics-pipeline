@@ -28,7 +28,7 @@ process KRAKEN2 {
             --paired "${reads_1}" "${reads_2}" 2> kraken2.err
     status=\${?}
     if [ \${status} -gt 0 ] ; then
-        # try and catch known errors from the stored stdout stream ; cannot rely on spades.log file as this is not always created in time
+        # try and catch known errors from the stored stdout stream
         ## none known so far; keep this for potential future cases
         # if not caught known exception, process should not have exited yet - do it now with stored metaspades exit status
         cat kraken2.err 1>&2 && exit \${status}
