@@ -58,7 +58,7 @@ results/
 
 Nextflow trace and other files describing the execution of the pipeline per sample and per process will be written in the `results/pipeline_info/` directory by default. 
 
-The exit codes returned by the processes as reported in the trace file can help understand what may have caused some process failures. In particular, this pipeline catches errors from Kraken2, Bracken, metaSPAdes and inStrain that are due to no reads or too few reads being present in the input reads files; in these case, the process will fail but exit with an error code 7.
+The exit codes returned by the processes as reported in the trace file can help understand what may have caused some process failures. In particular, this pipeline catches errors from Kraken2, Bracken, metaSPAdes and inStrain that are due to no reads or too few reads being present in the input reads files; in these cases, the process will fail but exit with an error code 7.
 
 Custom error codes:
 - 7: no reads or too few reads in input
