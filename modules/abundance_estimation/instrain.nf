@@ -1,21 +1,11 @@
-process INSTRAIN {
+process INSTRAIN_PROFILE {
     tag "${meta.ID}"
     label 'mem_4'
     label 'time_queue_from_normal'
 
-    container 'quay.io/biocontainers/instrain:1.6.4--pyhdfd78af_0'
-    // more recent options are available:
-    // - verson 1.7.0 is used in team162's version of abundance_estimation pipeline,
-    //   but should be avoided as known to be unstable annd several bug fixes were introduced later
-    // - v1.8.1 introduces fixes for the above; v1.8.0 introduced nicer error handling when there is no hit,
-    //   and that would make the output much more readable in those cases - but that means we need to test
-    //   that the output are similar, beyond that it just works
-    //   container 'quay.io/biocontainers/instrain:1.8.1--pyhdfd78af_0'
-    // - v1.9.0 latest with "Efficiency improvements for inStrain compare and Error message clarification" 
-    //   but very recent so might be unstable
-
+    container 'quay.io/sangerpathogens/instrain:1.9.0'
+    
     if (params.instrain_full_output_abundance_estimation) { publishDir path: "${params.outdir}/${meta.ID}/instrain/", mode: 'copy', overwrite: true, pattern: "*_instrain_output" }
-    if (params.instrain_quick_profile_abundance_estimation) { publishDir path: "${params.outdir}/${meta.ID}/instrain/", mode: 'copy', overwrite: true, pattern: "*_instrain_quick_profile_output" }
     publishDir "${params.outdir}/${meta.ID}/instrain/", mode: 'copy', overwrite: true, pattern: '*.tsv'
     
     input:
@@ -23,7 +13,6 @@ process INSTRAIN {
 
     output:
     path("${meta.ID}_instrain_output"), emit: full_output, optional: true
-    path("${meta.ID}_instrain_quick_profile_output"), emit: quick_profile, optional: true
     tuple val(meta), path("${genome_info_file}"), emit: genome_info_file, optional: true
     path(sorted_bam), emit: sorted_bam
     tuple val(meta), path("${workdir}"), emit: meta_workdir
@@ -33,16 +22,45 @@ process INSTRAIN {
     workdir="workdir.txt"
     """
     pwd > workdir.txt
-    if ${params.instrain_quick_profile_abundance_estimation}
-    then
-        inStrain quick_profile ${sorted_bam} ${genome_file} -o ${meta.ID}_instrain_quick_profile_output -p ${task.cpus} -s ${stb_file}
+    inStrain profile ${sorted_bam} ${genome_file} -o ${meta.ID}_instrain_output -p ${task.cpus} -s ${stb_file} --skip_plot_generation ${params.instrain_profile_options} 2> instrain.err
+    status=\${?}
+    if [ \${status} -gt 0 ] ; then
+        # try and catch known exceptions from the stored stderr stream
+        grep "Exception: No paired reads detected" instrain.err && cat instrain.err 1>&2 && exit 7
+        # if not caught known exception, process should not have exited yet - do it now spitting back the stored stderr and exit status
+        cat instrain.err 1>&2 && exit \${status}
     else
-        inStrain profile ${sorted_bam} ${genome_file} -o ${meta.ID}_instrain_output -p ${task.cpus} -s ${stb_file} --skip_plot_generation ${params.instrain_profile_options}
+        cat instrain.err 1>&2
     fi
-    if ! ${params.instrain_full_output_abundance_estimation} && ! ${params.instrain_quick_profile_abundance_estimation}
-    then
+    if [ ! ${params.instrain_full_output_abundance_estimation} ] ; then
         mv ${meta.ID}_instrain_output/output/${meta.ID}"_instrain_output_genome_info.tsv" ./${genome_info_file}
     fi
+    """
+}
+
+process INSTRAIN_QUICKPROFILE {
+    tag "${meta.ID}"
+    label 'mem_4'
+    label 'time_queue_from_normal'
+
+    container 'quay.io/sangerpathogens/instrain:1.9.0'
+    
+    if (params.instrain_quick_profile_abundance_estimation) { publishDir path: "${params.outdir}/${meta.ID}/instrain/", mode: 'copy', overwrite: true, pattern: "*_instrain_quick_profile_output" }
+    publishDir "${params.outdir}/${meta.ID}/instrain/", mode: 'copy', overwrite: true, pattern: '*.tsv'
+    
+    input:
+    tuple val(meta), path(sorted_bam), path(stb_file), path(genome_file)
+
+    output:
+    path("${meta.ID}_instrain_quick_profile_output"), emit: quick_profile, optional: true
+    path(sorted_bam), emit: sorted_bam
+    tuple val(meta), path("${workdir}"), emit: meta_workdir
+
+    script:
+    workdir="workdir.txt"
+    """
+    pwd > "${workdir}"
+    inStrain quick_profile ${sorted_bam} ${genome_file} -o ${meta.ID}_instrain_quick_profile_output -p ${task.cpus} -s ${stb_file}
     """
 }
 

@@ -12,19 +12,34 @@ process KRAKEN2 {
     tuple val(meta), path(reads_1), path(reads_2), path(kraken2_db)
 
     output:
-    tuple val(meta), path("*kraken_report.tsv"),  emit: kraken2_report
-    tuple val(meta), path("*kraken_sample_report.tsv"),  emit: kraken2_sample_report
+    tuple val(meta), path(kreportout),  emit: kraken2_report
+    tuple val(meta), path(ksamreportout),  emit: kraken2_sample_report
 
     script:
-    kraken2_id = "${meta.ID}".replaceAll('#','_')
+    kreportout = "${meta.ID}_kraken_report.tsv"
+    ksamreportout = "${meta.ID}_kraken_sample_report.tsv"
     """
     kraken2 --db "${kraken2_db}" \
             --threads ${task.cpus} \
-            --output "${meta.ID}_kraken_report.tsv" \
+            --output "${kreportout}" \
             --use-names \
-            --report "${meta.ID}_kraken_sample_report.tsv" \
+            --report "${ksamreportout}" \
             --report-zero-counts \
-            --paired "${reads_1}" "${reads_2}"
+            --paired "${reads_1}" "${reads_2}" 2> kraken2.err
+    status=\${?}
+    if [ \${status} -gt 0 ] ; then
+        # try and catch known errors from the stored stdout stream
+        ## none known so far; keep this for potential future cases
+        # if not caught known exception, process should not have exited yet - do it now with stored exit status
+        cat kraken2.err 1>&2 && exit \${status}
+    else
+        # try and catch known warnings from the stored stdout stream when not causing non-zero exit code
+        ## no sequence reads processed, meaning empty read input - exit 7
+        grep '0 sequences (0.00 Mbp) processed' kraken2.err \
+          && [ ! -s "${kreportout}" ] && cat kraken2.err 1>&2 && exit 7
+        # NB: in case the *kraken_report.tsv file is missing not due to the above, nextflow will error out as expecting it as ouput file
+        cat kraken2.err 1>&2
+    fi
     """
 }
 

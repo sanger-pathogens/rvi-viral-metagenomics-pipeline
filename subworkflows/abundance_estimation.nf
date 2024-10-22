@@ -25,7 +25,7 @@ include { MERGE_FASTQS } from '../modules/abundance_estimation/merge_fastq.nf'
 include { SOURMASH_SKETCH; SOURMASH_GATHER } from '../modules/abundance_estimation/sourmash.nf'
 include { SUBSET_GTDB } from '../modules/abundance_estimation/subset_fasta.nf'
 include { BOWTIE_INDEX; BOWTIE2SAMTOOLS; GET_OVERALL_MAPPING_RATE } from '../modules/abundance_estimation/bowtie.nf'
-include { GENERATE_STB; INSTRAIN; GENERATE_INSTRAIN_SUMMARY } from '../modules/abundance_estimation/instrain.nf'
+include { GENERATE_STB; INSTRAIN_PROFILE; INSTRAIN_QUICKPROFILE; GENERATE_INSTRAIN_SUMMARY } from '../modules/abundance_estimation/instrain.nf'
 
 //
 // SUBWORKFLOWS
@@ -97,14 +97,24 @@ workflow ABUNDANCE_ESTIMATION{
         .combine(stb_channel)
         .combine(genomes_channel)
         .set { instrain_profiling_ch }
-        
-        INSTRAIN(instrain_profiling_ch)
 
-        INSTRAIN.out.genome_info_file
-        .collect() { it[1] }
-        .set { genome_info_files }
+        if (!params.instrain_quick_profile_abundance_estimation){
+            INSTRAIN_PROFILE(instrain_profiling_ch)
 
-        GENERATE_INSTRAIN_SUMMARY(genome_info_files)
+            INSTRAIN_PROFILE.out.genome_info_file
+            .collect() { it[1] }
+            .set { genome_info_files }
+
+            INSTRAIN_PROFILE.out.meta_workdir
+            .set { instrain_meta_workdir_ch } 
+
+            GENERATE_INSTRAIN_SUMMARY(genome_info_files)
+        }else{
+            INSTRAIN_QUICKPROFILE(instrain_profiling_ch)
+
+            INSTRAIN_QUICKPROFILE.out.meta_workdir
+            .set { instrain_meta_workdir_ch } 
+        }
     }
 
     if (params.cleanup_intermediate_files_abundance_estimation && params.bowtie2_samtools_only_abundance_estimation) {
@@ -116,6 +126,6 @@ workflow ABUNDANCE_ESTIMATION{
     }
 
     if (params.cleanup_intermediate_files_abundance_estimation && !params.bowtie2_samtools_only_abundance_estimation) {
-        CLEANUP_INSTRAIN_OUTPUT(INSTRAIN.out.meta_workdir)
+        CLEANUP_INSTRAIN_OUTPUT(instrain_meta_workdir_ch)
     }
 }
