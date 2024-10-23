@@ -133,6 +133,16 @@ bsub.py -q oversubscribed -o rvi-pipeline.log -e rvi-pipeline.log 4 rvi-pipeline
 ... or any combination of the above!
 
 Adding `-resume` to any of these commands should allow resuming the piepline after interuption, for instance if the piepline run has exceeded the runtime limit of the job queue through which it was submitted.
+## Error handling
+three levels of how to handle fastq errors which can occur due to problems with input data:
+    
+    exit_on_error: exit if there are any samples unreadable or below the limit
+    
+    only_unreadable: Only exit if there are samples that are unreadable
+    
+    ignore: entirely ignore samples that have errors and continue the pipeline
+
+These can be controlled with the flag --fastq_error_handling_mode
 
 ## Dependencies
 

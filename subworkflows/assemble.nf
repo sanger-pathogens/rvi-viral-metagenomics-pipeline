@@ -8,7 +8,14 @@ workflow ASSEMBLE_META {
 
     main:
     metaspades_subsample_limit_ch = Channel.value( params.metaspades_subsample_limit ) 
-    SUBSAMPLE_ITER(meta_reads, metaspades_subsample_limit_ch)
+    
+    meta_reads.map{ meta, R1, R2 -> 
+        def readCount = R1.countFastq() //as we made these files already they have been verified once
+        [meta, R1, R2, readCount]
+    }
+    | set{ready_for_subsampling}
+
+    SUBSAMPLE_ITER(ready_for_subsampling, metaspades_subsample_limit_ch)
     | METASPADES
 
 

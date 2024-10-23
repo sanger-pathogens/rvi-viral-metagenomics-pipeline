@@ -1,17 +1,15 @@
 include { SUBSAMPLE_SEQTK } from '../modules/subsample/seqtk.nf'
 
 workflow SUBSAMPLE_ITER {
-
     take:
-    paired_channel // tuple val(meta), path(read_1), path(read_2)
+    verified_fastq_ch // tuple val(meta), path(read_1), path(read_2)
     subsample_limit_ch // val(int)
 
     main:
     //if number of reads is above subsample limit put to a channel branch into a channel for subsampling
     //if below limit branch into a seperate channel where no subsampling is done and instead skips the step
-    paired_channel.combine(subsample_limit_ch)
-    .branch{ meta, read_1, read_2, subsample_limit ->
-        def read_count = read_1.countFastq()
+    verified_fastq_ch.combine(subsample_limit_ch)
+    .branch{ meta, read_1, read_2, read_count, subsample_limit ->
         needs_subsampling: read_count > subsample_limit
             return tuple ( meta, read_1, read_2 )
         already_below_subsample: true

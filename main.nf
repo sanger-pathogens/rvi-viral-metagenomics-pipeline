@@ -9,6 +9,7 @@ include { validate_parameters         } from './modules/validate_params.nf'
 include { COMBINE_IRODS ; 
           COMBINE_READS        } from "./assorted-sub-workflows/combined_input/subworkflows/combined_input.nf"
 include { IRODS_EXTRACTOR      } from "./assorted-sub-workflows/irods_extractor/subworkflows/irods.nf"
+include { VERIFY_FASTQ         } from "./subworkflows/verify_fastq.nf"
 include { SUBSAMPLE_ITER       } from "./subworkflows/subsample.nf"
 include { PREPROCESSING        } from "./subworkflows/preprocessing.nf"
 include { ASSEMBLE_META        } from "./subworkflows/assemble.nf"
@@ -36,10 +37,6 @@ workflow {
         printHelp()
         exit 0
     }
-    if (params.help_all) {
-        printHelpAll()
-        exit 0
-    }
 
     validate_parameters()
 
@@ -47,8 +44,10 @@ workflow {
     | IRODS_EXTRACTOR
     | COMBINE_READS
 
-    initial_subsample_limit_ch = Channel.value( params.initial_subsample_limit ) 
-    SUBSAMPLE_ITER(COMBINE_READS.out.all_reads_ready_to_map_ch, initial_subsample_limit_ch)
+    VERIFY_FASTQ(COMBINE_READS.out.all_reads_ready_to_map_ch)
+
+    initial_subsample_limit_ch = Channel.value( params.initial_subsample_limit )
+    SUBSAMPLE_ITER(VERIFY_FASTQ.out.verified_fastq_ch, initial_subsample_limit_ch)
 
     SUBSAMPLE_ITER.out.final_read_channel
     .set{ capped_reads_ch }
