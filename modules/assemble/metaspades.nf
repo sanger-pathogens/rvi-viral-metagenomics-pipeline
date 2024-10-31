@@ -35,8 +35,9 @@ process METASPADES {
         ## empty output contigs.fasta file and no scaffold file, often meaning low read input - exit 7
         grep '======= SPAdes pipeline finished WITH WARNINGS!' spades.log 1>&2 \
           && grep ' * Assembled contigs are in .\\+contigs.fasta' spades.log 1>&2 \
-          && [ ! -s contigs.fasta ] && exit 7
+          && [ ! -s contigs.fasta ] && exit 7 
         # NB: in case scaffolds.fasta file is missing not due to the above, nextflow will error out as expecting it as ouput file
+        exit \${status}
     fi
 
     """
