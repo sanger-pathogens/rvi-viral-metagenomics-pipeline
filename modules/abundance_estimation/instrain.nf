@@ -32,9 +32,7 @@ process INSTRAIN_PROFILE {
     else
         cat instrain.err 1>&2
     fi
-    if [ ! ${params.instrain_full_output_abundance_estimation} ] ; then
-        mv ${meta.ID}_instrain_output/output/${meta.ID}"_instrain_output_genome_info.tsv" ./${genome_info_file}
-    fi
+    cp ${meta.ID}_instrain_output/output/${meta.ID}"_instrain_output_genome_info.tsv" ./${genome_info_file}
     """
 }
 
