@@ -1,7 +1,7 @@
 process INSTRAIN_PROFILE {
     tag "${meta.ID}"
     label 'mem_4'
-    label 'time_queue_from_normal'
+    label 'time_queue_from_normal2'
 
     container 'quay.io/sangerpathogens/instrain:1.9.0'
     
