@@ -71,7 +71,7 @@ workflow ABUNDANCE_ESTIMATION{
 
         genomes_channel = Channel.fromPath("${params.genome_file_abundance_estimation}")
         
-        index_channel = Channel.from("${params.precomputed_index_abundance_estimation}")
+        index_channel = Channel.of("${params.precomputed_index_abundance_estimation}")
 
         stb_channel = Channel.fromPath("${params.stb_file_abundance_estimation}")
     }
