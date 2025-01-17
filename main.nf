@@ -6,15 +6,13 @@ include { validate_parameters         } from './modules/validate_params.nf'
 //
 // SUBWORKFLOWS
 //
-include { COMBINE_IRODS ; 
-          COMBINE_READS        } from "./assorted-sub-workflows/combined_input/subworkflows/combined_input.nf"
-include { IRODS_EXTRACTOR      } from "./assorted-sub-workflows/irods_extractor/subworkflows/irods.nf"
-include { VERIFY_FASTQ         } from "./subworkflows/verify_fastq.nf"
-include { SUBSAMPLE_ITER       } from "./subworkflows/subsample.nf"
-include { PREPROCESSING        } from "./subworkflows/preprocessing.nf"
-include { ASSEMBLE_META        } from "./subworkflows/assemble.nf"
-include { KRAKEN2BRACKEN       } from './subworkflows/kraken2bracken.nf'
-include { ABUNDANCE_ESTIMATION } from './subworkflows/abundance_estimation.nf'
+include { MIXED_INPUT         } from './rvi_toolbox/subworkflows/mixed_input.nf'
+include { VERIFY_FASTQ         } from "./rvi_toolbox/subworkflows/verify_fastq.nf"
+include { SUBSAMPLE_ITER       } from "./rvi_toolbox/subworkflows/subsample.nf"
+include { PREPROCESSING        } from "./rvi_toolbox/subworkflows/preprocessing.nf"
+include { ASSEMBLE_META        } from "./rvi_toolbox/subworkflows/assemble.nf"
+include { KRAKEN2BRACKEN       } from './rvi_toolbox/subworkflows/kraken2bracken.nf'
+include { ABUNDANCE_ESTIMATION } from './rvi_toolbox/subworkflows/abundance_estimation.nf'
 
 def logo = NextflowTool.logo(workflow, params.monochrome_logs)
 
@@ -40,11 +38,9 @@ workflow {
 
     validate_parameters()
 
-    COMBINE_IRODS
-    | IRODS_EXTRACTOR
-    | COMBINE_READS
-
-    VERIFY_FASTQ(COMBINE_READS.out.all_reads_ready_to_map_ch)
+    
+    MIXED_INPUT
+    | VERIFY_FASTQ
 
     initial_subsample_limit_ch = Channel.value( params.initial_subsample_limit )
     SUBSAMPLE_ITER(VERIFY_FASTQ.out.verified_fastq_ch, initial_subsample_limit_ch)
