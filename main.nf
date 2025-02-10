@@ -54,7 +54,7 @@ workflow {
     } else {
         PREPROCESSING(capped_reads_ch)
 
-        PREPROCESSING.out.paired_channel
+        PREPROCESSING.out.out_ch
         .set{ ready_reads_ch }
     }
 
