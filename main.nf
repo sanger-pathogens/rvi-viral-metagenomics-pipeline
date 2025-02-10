@@ -22,7 +22,7 @@ def printHelp() {
     NextflowTool.help_message("${workflow.ProjectDir}/schema.json", 
                               ["${workflow.ProjectDir}/rvi_toolbox/subworkflows/combined_input.json",
                                "${workflow.ProjectDir}/rvi_toolbox/subworkflows/irods.json",
-                              ["${workflow.ProjectDir}/rvi_toolbox/subworkflows/mixed_input.json",
+                              "${workflow.ProjectDir}/rvi_toolbox/subworkflows/mixed_input.json",
                                "${workflow.ProjectDir}/rvi_toolbox/subworkflows/PREPROCESSING.json",
                                "${workflow.ProjectDir}/rvi_toolbox/subworkflows/subsample.json",
                                "${workflow.ProjectDir}/rvi_toolbox/subworkflows/assemble.json",
