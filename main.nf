@@ -9,7 +9,7 @@ include { validate_parameters         } from './modules/validate_params.nf'
 include { MIXED_INPUT         } from './rvi_toolbox/subworkflows/mixed_input.nf'
 include { VERIFY_FASTQ         } from "./rvi_toolbox/subworkflows/verify_fastq.nf"
 include { SUBSAMPLE_ITER       } from "./rvi_toolbox/subworkflows/subsample.nf"
-include { PREPROCESSING        } from "./rvi_toolbox/subworkflows/PREPROCESSING.nf"
+include { PREPROCESSING        } from "./rvi_toolbox/subworkflows/preprocessing.nf"
 include { ASSEMBLE_META        } from "./rvi_toolbox/subworkflows/assemble.nf"
 include { KRAKEN2BRACKEN       } from './rvi_toolbox/subworkflows/kraken2bracken.nf'
 include { ABUNDANCE_ESTIMATION } from './rvi_toolbox/subworkflows/abundance_estimation.nf'
@@ -23,7 +23,7 @@ def printHelp() {
                               ["${workflow.ProjectDir}/rvi_toolbox/subworkflows/combined_input.json",
                                "${workflow.ProjectDir}/rvi_toolbox/subworkflows/irods.json",
                               "${workflow.ProjectDir}/rvi_toolbox/subworkflows/mixed_input.json",
-                               "${workflow.ProjectDir}/rvi_toolbox/subworkflows/PREPROCESSING.json",
+                               "${workflow.ProjectDir}/rvi_toolbox/subworkflows/preprocessing.json",
                                "${workflow.ProjectDir}/rvi_toolbox/subworkflows/subsample.json",
                                "${workflow.ProjectDir}/rvi_toolbox/subworkflows/assemble.json",
                                "${workflow.ProjectDir}/rvi_toolbox/subworkflows/kraken2bracken.json",
