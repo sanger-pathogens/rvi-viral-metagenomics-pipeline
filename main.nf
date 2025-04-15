@@ -41,6 +41,7 @@ workflow {
     
     MIXED_INPUT
     | VERIFY_FASTQ
+    .view()
 
     initial_subsample_limit_ch = Channel.value( params.initial_subsample_limit )
     SUBSAMPLE_ITER(VERIFY_FASTQ.out.verified_fastq_ch, initial_subsample_limit_ch)
