@@ -17,11 +17,11 @@ The input is curretly specified as command-line parameters pointing to the seque
 
 We will soon introduce support for using a manifest as input, allowing batch and more flexible input specification.
 
-It is important to note that although the pipeline input is specified as whole studies (or more refined searches based on run ID etc.), only data that does not already exist in the results directory is downloaded. This is checked at the time of starting the pipeline based on presence/absence of the trimmed_reads folder in the results directory (as specified by --outdir  parameter). Therefore it is important to re-use the same results directory to avoid redownloading and reanalysis of the same data. 
+It is important to note that although the pipeline input is specified as whole studies (or more refined searches based on run ID etc.), only data that does not already exist in the results directory is downloaded. This is checked at the time of starting the pipeline based on presence/absence of the trimmed_reads folder in the results directory (as specified by `--results_dir`  parameter). Therefore it is important to re-use the same results directory to avoid redownloading and reanalysis of the same data. 
 
 ## Output
 
-This pipeline will have a wide variety of results, which will be written in the output directory specified by the `--outdir` parameter (default name `result`/`), each with a directory sub-structure similar to the below:
+This pipeline will have a wide variety of results, which will be written in the output directory specified by the `--results_dir` parameter (default name `result`/`), each with a directory sub-structure similar to the below:
 
 ```
 results/
@@ -113,21 +113,21 @@ With a combination of CLI options to specify a sequencing run from iRODS as inpu
 ```sh
 bsub.py -q oversubscribed -o rvi-pipeline.log -e rvi-pipeline.log 4 rvi-pipeline \
     nextflow run rvi-pipeline/main.nf \
-	--studyid 7289 --runid 48843 --laneid 2 --outdir results
+	--studyid 7289 --runid 48843 --laneid 2 --results_dir results
 ```
 
 With a more complex set of paraemeters to request data from iRODS, using a manifest of lanes:
 ```sh
 bsub.py -q oversubscribed -o rvi-pipeline.log -e rvi-pipeline.log 4 rvi-pipeline \
     nextflow run rvi-pipeline/main.nf \
-	--manifest_of_lanes irods_manifest.csv --outdir results
+	--manifest_of_lanes irods_manifest.csv --results_dir results
 ```
 
 With short read datasets already present on disk, usin ga manifest of reads:
 ```sh
 bsub.py -q oversubscribed -o rvi-pipeline.log -e rvi-pipeline.log 4 rvi-pipeline \
     nextflow run rvi-pipeline/main.nf \
-	--manifest_of_reads reads_manifest.csv --outdir results
+	--manifest_of_reads reads_manifest.csv --results_dir results
 ```
 
 ... or any combination of the above!
