@@ -53,7 +53,7 @@ workflow {
     } else {
         PREPROCESSING(capped_reads_ch)
 
-        PREPROCESSING.out.reads_ch
+        PREPROCESSING.out.out_ch
         .set{ ready_reads_ch }
     }
 
