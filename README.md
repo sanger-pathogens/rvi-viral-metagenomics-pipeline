@@ -13,11 +13,26 @@ It is composed of several subworkflows:
 
 ## Input
 
-The input is curretly specified as command-line parameters pointing to the sequencing "lanes" produced by the Sanger sequencing pipeline and stored on the iRODS server. This is generally achieved by specifying their study, run, lane and plex identifier. with this approach, only the first level (study) of input specification is mandataory, leading to downloading all data from this study. Queries to pick data/lanes from iRODS can be further tailored using various metadata fields, using a "manifest of lanes" CSV file to describe the queries. Another appraoch is to provide reads already present on disk through a "manifest of reads" CSV file. All these input appraoches are described in the Usage section via the pipeline help message.
+The input is currently specified as command-line parameters pointing to the sequencing "lanes" produced by the Sanger sequencing pipeline and stored on the iRODS server. This is generally achieved by specifying their study, run, lane and plex identifier. with this approach, only the first level (study) of input specification is mandataory, leading to downloading all data from this study. Queries to pick data/lanes from iRODS can be further tailored using various metadata fields, using a "manifest of lanes" CSV file to describe the queries. Another appraoch is to provide reads already present on disk through a "manifest of reads" CSV file. All these input appraoches are described in the Usage section via the pipeline help message.
 
 We will soon introduce support for using a manifest as input, allowing batch and more flexible input specification.
 
-It is important to note that although the pipeline input is specified as whole studies (or more refined searches based on run ID etc.), only data that does not already exist in the results directory is downloaded. This is checked at the time of starting the pipeline based on presence/absence of the trimmed_reads folder in the results directory (as specified by `--results_dir`  parameter). Therefore it is important to re-use the same results directory to avoid redownloading and reanalysis of the same data. 
+It is important to note that although the pipeline input is specified as whole studies (or more refined searches based on run ID etc.), only data that does not already exist in the results directory is downloaded. This is checked at the time of starting the pipeline based on presence/absence of the trimmed_reads folder in the results directory (as specified by `--results_dir`  parameter). Therefore it is important to re-use the same results directory to avoid redownloading and reanalysis of the same data.
+
+### Abundance estimation
+
+To generate the bowtie2 index for the `precomputed_index_abundance_estimation` param:
+
+```
+bowtie2-build viral.1.1.genomic.fna viral.1.1.genomic.bt2 --large-index
+```
+
+To generate the custom stb file for the `stb_file_abundance_estimation` param:
+
+```
+grep '^>' viral.1.1.genomic.fna | sed 's/^>//g' | awk -v OFS=$'\t' '{print $1,$0}' > viral.1.1.genomic_custom.stb
+```
+
 
 ## Output
 
