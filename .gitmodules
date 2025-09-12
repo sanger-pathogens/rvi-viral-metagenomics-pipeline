@@ -1,6 +1,6 @@
 [submodule "lib"]
 	path = lib
-	url = git@gitlab.internal.sanger.ac.uk:sanger-pathogens/pipelines/nextflowtool.git
+	url = https://github.com/sanger-pathogens/nextflowtool.git
 [submodule "rvi_toolbox"]
 	path = rvi_toolbox
-	url = git@gitlab.internal.sanger.ac.uk:rvi/rvi_toolbox.git
+	url = https://github.com/genomic-surveillance/rvi_toolbox.git
