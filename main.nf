@@ -13,6 +13,7 @@ include { PREPROCESSING        } from "./rvi_toolbox/subworkflows/preprocessing.
 include { ASSEMBLE_META        } from "./rvi_toolbox/subworkflows/assemble.nf"
 include { KRAKEN2BRACKEN       } from './rvi_toolbox/subworkflows/kraken2bracken.nf'
 include { ABUNDANCE_ESTIMATION } from './rvi_toolbox/subworkflows/abundance_estimation.nf'
+include { GENOMAD_CLASSIFY     } from './rvi_toolbox/subworkflows/genomad.nf'
 
 def logo = NextflowTool.logo(workflow, params.monochrome_logs)
 
@@ -26,7 +27,8 @@ def printHelp() {
                                "${workflow.ProjectDir}/rvi_toolbox/subworkflows/subsample.json",
                                "${workflow.ProjectDir}/rvi_toolbox/subworkflows/assemble.json",
                                "${workflow.ProjectDir}/rvi_toolbox/subworkflows/kraken2bracken.json",
-                               "${workflow.ProjectDir}/rvi_toolbox/subworkflows/abundance_estimation.json"],
+                               "${workflow.ProjectDir}/rvi_toolbox/subworkflows/abundance_estimation.json",
+                               "${workflow.ProjectDir}/rvi_toolbox/subworkflows/genomad.json"],
     params.monochrome_logs, log)
 }
 
@@ -58,6 +60,8 @@ workflow {
     }
 
     ASSEMBLE_META(ready_reads_ch)
+
+    GENOMAD_CLASSIFY(ASSEMBLE_META.out.contigs_channel)
 
     ABUNDANCE_ESTIMATION(ready_reads_ch)
 
