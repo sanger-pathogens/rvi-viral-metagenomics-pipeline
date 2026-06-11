@@ -15,6 +15,7 @@ include { KRAKEN2BRACKEN       } from './rvi_toolbox/subworkflows/kraken2bracken
 include { ABUNDANCE_ESTIMATION } from './rvi_toolbox/subworkflows/abundance_estimation.nf'
 include { GENOMAD_CLASSIFY     } from './rvi_toolbox/subworkflows/genomad.nf'
 include { VRHYME_BIN           } from './rvi_toolbox/subworkflows/vrhyme.nf'
+include { CHECKV_QC            } from './rvi_toolbox/subworkflows/checkv.nf'
 
 def logo = NextflowTool.logo(workflow, params.monochrome_logs)
 
@@ -30,7 +31,8 @@ def printHelp() {
                                "${workflow.ProjectDir}/rvi_toolbox/subworkflows/kraken2bracken.json",
                                "${workflow.ProjectDir}/rvi_toolbox/subworkflows/abundance_estimation.json",
                                "${workflow.ProjectDir}/rvi_toolbox/subworkflows/genomad.json",
-                               "${workflow.ProjectDir}/rvi_toolbox/subworkflows/vrhyme.json"],
+                               "${workflow.ProjectDir}/rvi_toolbox/subworkflows/vrhyme.json",
+                               "${workflow.ProjectDir}/rvi_toolbox/subworkflows/checkv.json"],
     params.monochrome_logs, log)
 }
 
@@ -69,6 +71,11 @@ workflow {
         GENOMAD_CLASSIFY.out.virus_fna,
         GENOMAD_CLASSIFY.out.virus_summary,
         ready_reads_ch
+    )
+
+    CHECKV_QC(
+        GENOMAD_CLASSIFY.out.virus_fna,
+        VRHYME_BIN.out.bins_fasta
     )
 
     ABUNDANCE_ESTIMATION(ready_reads_ch)
