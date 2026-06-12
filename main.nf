@@ -13,6 +13,9 @@ include { PREPROCESSING        } from "./rvi_toolbox/subworkflows/preprocessing.
 include { ASSEMBLE_META        } from "./rvi_toolbox/subworkflows/assemble.nf"
 include { KRAKEN2BRACKEN       } from './rvi_toolbox/subworkflows/kraken2bracken.nf'
 include { ABUNDANCE_ESTIMATION } from './rvi_toolbox/subworkflows/abundance_estimation.nf'
+include { GENOMAD_CLASSIFY     } from './rvi_toolbox/subworkflows/genomad.nf'
+include { VRHYME_BIN           } from './rvi_toolbox/subworkflows/vrhyme.nf'
+include { VCONTACT3_RUN        } from './rvi_toolbox/subworkflows/vcontact3.nf'
 
 def logo = NextflowTool.logo(workflow, params.monochrome_logs)
 
@@ -26,7 +29,10 @@ def printHelp() {
                                "${workflow.ProjectDir}/rvi_toolbox/subworkflows/subsample.json",
                                "${workflow.ProjectDir}/rvi_toolbox/subworkflows/assemble.json",
                                "${workflow.ProjectDir}/rvi_toolbox/subworkflows/kraken2bracken.json",
-                               "${workflow.ProjectDir}/rvi_toolbox/subworkflows/abundance_estimation.json"],
+                               "${workflow.ProjectDir}/rvi_toolbox/subworkflows/abundance_estimation.json",
+                               "${workflow.ProjectDir}/rvi_toolbox/subworkflows/genomad.json",
+                               "${workflow.ProjectDir}/rvi_toolbox/subworkflows/vrhyme.json",
+                               "${workflow.ProjectDir}/rvi_toolbox/subworkflows/vcontact3.json"],
     params.monochrome_logs, log)
 }
 
@@ -59,7 +65,23 @@ workflow {
 
     ASSEMBLE_META(ready_reads_ch)
 
+    GENOMAD_CLASSIFY(ASSEMBLE_META.out.contigs_channel)
+
+    VRHYME_BIN(
+        GENOMAD_CLASSIFY.out.virus_fna,
+        GENOMAD_CLASSIFY.out.virus_summary,
+        ready_reads_ch
+    )
+
     ABUNDANCE_ESTIMATION(ready_reads_ch)
 
     KRAKEN2BRACKEN(ready_reads_ch)
+
+    // Pipeline-level final step: barrier on every sample's vRhyme finishing,
+    // then run vContact3 once across the whole batch.
+    VCONTACT3_RUN(
+        GENOMAD_CLASSIFY.out.virus_proteins,
+        GENOMAD_CLASSIFY.out.virus_summary,
+        VRHYME_BIN.out.membership
+    )
 }
