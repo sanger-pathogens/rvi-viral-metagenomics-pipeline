@@ -14,7 +14,7 @@ include { ASSEMBLE_META        } from "./rvi_toolbox/subworkflows/assemble.nf"
 include { KRAKEN2BRACKEN       } from './rvi_toolbox/subworkflows/kraken2bracken.nf'
 include { ABUNDANCE_ESTIMATION } from './rvi_toolbox/subworkflows/abundance_estimation.nf'
 include { GENOMAD_CLASSIFY     } from './rvi_toolbox/subworkflows/genomad.nf'
-include { VRHYME_BIN; VRHYME_BIN_MULTISAMPLE } from './rvi_toolbox/subworkflows/vrhyme.nf'
+include { VRHYME_BIN; VRHYME_BIN_MULTISAMPLE; VRHYME_BIN_FAIRY } from './rvi_toolbox/subworkflows/vrhyme.nf'
 
 def logo = NextflowTool.logo(workflow, params.monochrome_logs)
 
@@ -65,13 +65,22 @@ workflow {
 
     GENOMAD_CLASSIFY(ASSEMBLE_META.out.contigs_channel)
 
-    if (params.vrhyme_multisample_coverage) {
+    if (params.vrhyme_use_fairy_coverage) {
+        // Cross-sample bowtie → fairy → reformat → vRhyme -c
+        VRHYME_BIN_FAIRY(
+            GENOMAD_CLASSIFY.out.virus_fna,
+            GENOMAD_CLASSIFY.out.virus_summary,
+            ready_reads_ch
+        )
+    } else if (params.vrhyme_multisample_coverage) {
+        // Cross-sample bowtie → vRhyme -b (multiple BAMs)
         VRHYME_BIN_MULTISAMPLE(
             GENOMAD_CLASSIFY.out.virus_fna,
             GENOMAD_CLASSIFY.out.virus_summary,
             ready_reads_ch
         )
     } else {
+        // Per-sample bowtie → vRhyme -b (single BAM)  (default)
         VRHYME_BIN(
             GENOMAD_CLASSIFY.out.virus_fna,
             GENOMAD_CLASSIFY.out.virus_summary,
