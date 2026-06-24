@@ -92,7 +92,9 @@ def validate_parameters() {
     errors += validate_number_param("--kraken2bracken_kraken2_threads", params.kraken2bracken_kraken2_threads)
     errors += validate_number_param("--kraken2bracken_bracken_threads", params.kraken2bracken_bracken_threads)
     errors += validate_number_param("--metaspades_base_mem_gb", params.metaspades_base_mem_gb)
-    
+    errors += validate_path_param("--msweep_themisto_index", params.msweep_themisto_index, type="file", mandatory=true)
+    errors += validate_path_param("--msweep_ref_groups", params.msweep_ref_groups, type="file", mandatory=true)
+
     if (errors > 0) {
         log.error(String.format("%d errors detected", errors))
         exit 1
