@@ -82,6 +82,7 @@ workflow {
     VCONTACT3_RUN(
         GENOMAD_CLASSIFY.out.virus_proteins,
         GENOMAD_CLASSIFY.out.virus_summary,
-        VRHYME_BIN.out.membership
+        VRHYME_BIN.out.membership,
+        VRHYME_BIN.out.bins_fasta
     )
 }
