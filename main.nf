@@ -23,8 +23,8 @@ def logo = NextflowTool.logo(workflow, params.monochrome_logs)
 log.info logo
 
 def printHelp() {
-    NextflowTool.help_message("${workflow.ProjectDir}/schema.json", 
-                              ["${workflow.ProjectDir}/rvi_toolbox/subworkflows/irods.json",
+    NextflowTool.help_message(["${workflow.ProjectDir}/schema.json", 
+                              "${workflow.ProjectDir}/rvi_toolbox/subworkflows/irods.json",
                                "${workflow.ProjectDir}/rvi_toolbox/subworkflows/mixed_input.json",
                                "${workflow.ProjectDir}/rvi_toolbox/subworkflows/preprocessing.json",
                                "${workflow.ProjectDir}/rvi_toolbox/subworkflows/subsample.json",
@@ -33,7 +33,7 @@ def printHelp() {
                                "${workflow.ProjectDir}/rvi_toolbox/subworkflows/abundance_estimation.json",
                                "${workflow.ProjectDir}/rvi_toolbox/subworkflows/genomad.json",
                                "${workflow.ProjectDir}/rvi_toolbox/subworkflows/vrhyme.json",
-                               "${workflow.ProjectDir}/rvi_toolbox/subworkflows/checkv.json"],
+                               "${workflow.ProjectDir}/rvi_toolbox/subworkflows/checkv.json",
                                "${workflow.ProjectDir}/rvi_toolbox/subworkflows/vcontact3.json"],
     params.monochrome_logs, log)
 }
