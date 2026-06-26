@@ -16,6 +16,7 @@ include { ABUNDANCE_ESTIMATION } from './rvi_toolbox/subworkflows/abundance_esti
 include { GENOMAD_CLASSIFY     } from './rvi_toolbox/subworkflows/genomad.nf'
 include { VRHYME_BIN           } from './rvi_toolbox/subworkflows/vrhyme.nf'
 include { CHECKV_QC            } from './rvi_toolbox/subworkflows/checkv.nf'
+include { VCONTACT3_RUN        } from './rvi_toolbox/subworkflows/vcontact3.nf'
 
 def logo = NextflowTool.logo(workflow, params.monochrome_logs)
 
@@ -33,6 +34,7 @@ def printHelp() {
                                "${workflow.ProjectDir}/rvi_toolbox/subworkflows/genomad.json",
                                "${workflow.ProjectDir}/rvi_toolbox/subworkflows/vrhyme.json",
                                "${workflow.ProjectDir}/rvi_toolbox/subworkflows/checkv.json"],
+                               "${workflow.ProjectDir}/rvi_toolbox/subworkflows/vcontact3.json"],
     params.monochrome_logs, log)
 }
 
@@ -67,6 +69,7 @@ workflow {
 
     GENOMAD_CLASSIFY(ASSEMBLE_META.out.contigs_channel)
 
+    // Pooled bowtie + coverm + per-sample vRhyme (ViWrap-style).
     VRHYME_BIN(
         GENOMAD_CLASSIFY.out.virus_fna,
         GENOMAD_CLASSIFY.out.virus_summary,
@@ -81,4 +84,13 @@ workflow {
     ABUNDANCE_ESTIMATION(ready_reads_ch)
 
     KRAKEN2BRACKEN(ready_reads_ch)
+
+    // Pipeline-level final step: barrier on every sample's vRhyme finishing,
+    // then run vContact3 once across the whole batch.
+    VCONTACT3_RUN(
+        GENOMAD_CLASSIFY.out.virus_proteins,
+        GENOMAD_CLASSIFY.out.virus_summary,
+        VRHYME_BIN.out.membership,
+        VRHYME_BIN.out.bins_fasta
+    )
 }
