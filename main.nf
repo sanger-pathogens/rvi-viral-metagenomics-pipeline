@@ -67,6 +67,7 @@ workflow {
 
     GENOMAD_CLASSIFY(ASSEMBLE_META.out.contigs_channel)
 
+    // Pooled bowtie + coverm + per-sample vRhyme (ViWrap-style).
     VRHYME_BIN(
         GENOMAD_CLASSIFY.out.virus_fna,
         GENOMAD_CLASSIFY.out.virus_summary,
