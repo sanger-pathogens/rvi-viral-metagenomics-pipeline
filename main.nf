@@ -9,6 +9,7 @@ include { validate_parameters         } from './modules/validate_params.nf'
 include { MIXED_INPUT         } from './rvi_toolbox/subworkflows/mixed_input.nf'
 include { VERIFY_FASTQ         } from "./rvi_toolbox/subworkflows/verify_fastq.nf"
 include { SUBSAMPLE_ITER       } from "./rvi_toolbox/subworkflows/subsample.nf"
+include { VIRAL_MSWEEP         } from "./rvi_toolbox/subworkflows/msweep.nf"
 include { PREPROCESSING        } from "./rvi_toolbox/subworkflows/preprocessing.nf"
 include { ASSEMBLE_META        } from "./rvi_toolbox/subworkflows/assemble.nf"
 include { KRAKEN2BRACKEN       } from './rvi_toolbox/subworkflows/kraken2bracken.nf'
@@ -28,6 +29,7 @@ def printHelp() {
                                "${workflow.ProjectDir}/rvi_toolbox/subworkflows/mixed_input.json",
                                "${workflow.ProjectDir}/rvi_toolbox/subworkflows/preprocessing.json",
                                "${workflow.ProjectDir}/rvi_toolbox/subworkflows/subsample.json",
+                               "${workflow.ProjectDir}/rvi_toolbox/subworkflows/msweep.json",
                                "${workflow.ProjectDir}/rvi_toolbox/subworkflows/assemble.json",
                                "${workflow.ProjectDir}/rvi_toolbox/subworkflows/kraken2bracken.json",
                                "${workflow.ProjectDir}/rvi_toolbox/subworkflows/abundance_estimation.json",
@@ -65,10 +67,10 @@ workflow {
         .set{ ready_reads_ch }
     }
 
+    VIRAL_MSWEEP(ready_reads_ch)
     ASSEMBLE_META(ready_reads_ch)
 
     GENOMAD_CLASSIFY(ASSEMBLE_META.out.contigs_channel)
-
     // Pooled bowtie + coverm + per-sample vRhyme (ViWrap-style).
     VRHYME_BIN(
         GENOMAD_CLASSIFY.out.virus_fna,
