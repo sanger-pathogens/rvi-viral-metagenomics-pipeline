@@ -93,6 +93,7 @@ workflow {
         GENOMAD_CLASSIFY.out.virus_proteins,
         GENOMAD_CLASSIFY.out.virus_summary,
         VRHYME_BIN.out.membership,
-        VRHYME_BIN.out.bins_fasta
+        VRHYME_BIN.out.bins_fasta,
+        CHECKV_QC.out.virus_scaffolds_quality_summary
     )
 }
