@@ -15,6 +15,8 @@ include { KRAKEN2BRACKEN       } from './rvi_toolbox/subworkflows/kraken2bracken
 include { ABUNDANCE_ESTIMATION } from './rvi_toolbox/subworkflows/abundance_estimation.nf'
 include { GENOMAD_CLASSIFY     } from './rvi_toolbox/subworkflows/genomad.nf'
 include { VRHYME_BIN           } from './rvi_toolbox/subworkflows/vrhyme.nf'
+include { SCAFFOLD_ASSEMBLY    } from './rvi_toolbox/subworkflows/scaffold.nf'
+include { REFBASED_REFINE      } from './rvi_toolbox/subworkflows/refbased_refine.nf'
 
 def logo = NextflowTool.logo(workflow, params.monochrome_logs)
 
@@ -30,7 +32,9 @@ def printHelp() {
                                "${workflow.ProjectDir}/rvi_toolbox/subworkflows/kraken2bracken.json",
                                "${workflow.ProjectDir}/rvi_toolbox/subworkflows/abundance_estimation.json",
                                "${workflow.ProjectDir}/rvi_toolbox/subworkflows/genomad.json",
-                               "${workflow.ProjectDir}/rvi_toolbox/subworkflows/vrhyme.json"],
+                               "${workflow.ProjectDir}/rvi_toolbox/subworkflows/vrhyme.json",
+                               "${workflow.ProjectDir}/rvi_toolbox/subworkflows/scaffold.json",
+                               "${workflow.ProjectDir}/rvi_toolbox/subworkflows/refbased_refine.json"],
     params.monochrome_logs, log)
 }
 
@@ -63,15 +67,28 @@ workflow {
 
     ASSEMBLE_META(ready_reads_ch)
 
-    GENOMAD_CLASSIFY(ASSEMBLE_META.out.contigs_channel)
-
-    VRHYME_BIN(
-        GENOMAD_CLASSIFY.out.virus_fna,
-        GENOMAD_CLASSIFY.out.virus_summary,
-        ready_reads_ch
-    )
-
+    // Shared by both branches below: reused as-is for the default metagenomic-discovery
+    // flow's own abundance estimation, and (in assisted mode) as the source of each
+    // sample's auto-selected reference genome - see SCAFFOLD_ASSEMBLY / ASSISTED_ASSEMBLY.md.
     ABUNDANCE_ESTIMATION(ready_reads_ch)
 
-    KRAKEN2BRACKEN(ready_reads_ch)
+    if (params.assisted_denovo_assembly) {
+        // Assisted de novo viral genome assembly mode: reference-assisted scaffolding +
+        // align-call-refine consensus polishing, replacing the metagenomic-discovery
+        // flow below. See rvi_toolbox/subworkflows/ASSISTED_ASSEMBLY.md for full details
+        // and every intentional divergence from Broad's WDL workflow.
+        SCAFFOLD_ASSEMBLY(ASSEMBLE_META.out.contigs_channel, ABUNDANCE_ESTIMATION.out.genome_info_file)
+
+        REFBASED_REFINE(ready_reads_ch, SCAFFOLD_ASSEMBLY.out.scaffold_fasta)
+    } else {
+        GENOMAD_CLASSIFY(ASSEMBLE_META.out.contigs_channel)
+
+        VRHYME_BIN(
+            GENOMAD_CLASSIFY.out.virus_fna,
+            GENOMAD_CLASSIFY.out.virus_summary,
+            ready_reads_ch
+        )
+
+        KRAKEN2BRACKEN(ready_reads_ch)
+    }
 }
