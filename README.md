@@ -94,6 +94,102 @@ Finally, the `work/` folder contains all temporary files from the piepline run, 
 
 An example of a pipeline run can be found here: `/data/pam/rvidata/scratch/bait_capture/rvi_prod_5-2024_05_02-48843_1` 
 
+## Assisted de novo viral genome assembly mode
+
+In addition to the default metagenomic discovery flow described above, this pipeline
+offers an opt-in **assisted de novo viral genome assembly** mode
+(`--assisted_denovo_assembly true`), for targeted assembly of a single/likely-known
+organism rather than open-ended multi-taxon discovery. It ports the "Taxonomic
+selection," "Viral genome assembly," and consensus-polishing stages described in the
+[Broad Institute's viral-pipelines documentation](https://viral-pipelines.readthedocs.io/en/latest/description.html)
+into Nextflow subworkflows, reusing the same `quay.io/broadinstitute/viral-ngs` Docker
+images and command-line tools as the original WDL workflows. **Credit to the Broad
+Institute Viral Genomics team** for the underlying methodology and tooling this mode
+is built on top of.
+
+When active, this mode replaces the default geNomad/vRhyme/Kraken2Bracken discovery
+flow with:
+
+1. **Taxonomic filtering** *(optional)* — reads are narrowed to a genus-level
+   reference database with LAST alignment, if `--lastal_db_fasta` is supplied
+   (mirrors Broad's `filter_to_taxon` task).
+2. **Targeted assembly** — metaSPAdes assembly of the (optionally filtered) reads.
+3. **Reference selection** — every candidate reference clearing both
+   `select_reference_min_coverage` and `select_reference_min_breadth` in the existing
+   inStrain/RefSeq abundance-estimation output becomes its own species branch
+   (`genome_1`, `genome_2`, ... ranked by coverage), or a fixed reference is supplied
+   manually via `--reference_genome_fasta` (single branch, no fan-out).
+4. **Reference-assisted scaffolding** — contigs are ordered, oriented, and
+   gap-imputed against the selected reference (mirrors Broad's `scaffold` task:
+   skani + MUMmer/nucmer + MUSCLE/MAFFT).
+5. **Align-call-refine consensus polishing** — reads are aligned to the scaffold
+   with minimap2 and refined into a final consensus (mirrors Broad's
+   `assemble_refbased.wdl`), plus QC reporting (alignment metrics, coverage plots,
+   intrahost variant calls) for both the pre- and post-polish alignments.
+
+Note: reference selection (step 3) is a simple coverage+breadth threshold, not a
+validated "genuine co-infection vs. cross-mapping artifact" classifier — treat
+multiple `genome_N` results for one sample as candidates worth a human sanity-check,
+not a certified species call. See `rvi_toolbox/subworkflows/ASSISTED_ASSEMBLY.md` for
+this and every other intentional difference from Broad's original workflow (e.g.
+Novoalign dropped in favor of minimap2, Gap2Seq gap-filling not yet wired in).
+
+### Output files
+
+`taxon_filter/` is written once per sample (filtering/assembly happen before species
+selection). Everything else is written **once per qualifying candidate species**,
+nested under a `genome_N` folder (`genome_1`, `genome_2`, ... ranked by coverage —
+this label is *not* the reference accession; see `<genome_N>/selected_reference_accession.txt`
+for that):
+
+```
+results/<sample_id>/assisted_assembly/
+├── taxon_filter/
+│   └── VERSION
+└── <genome_N>/                  # e.g. genome_1, genome_2, ... one per qualifying candidate
+    ├── selected_reference_accession.txt
+    ├── scaffold/
+    ├── align_to_ref/
+    ├── refine/
+    └── align_to_self/
+```
+
+(When using the manual `--reference_genome_fasta` override instead of auto-selection,
+there is no fan-out and no `genome_N` nesting — paths stay flat,
+e.g. `assisted_assembly/scaffold/...` directly.)
+
+| File | Stage | Description |
+|---|---|---|
+| `taxon_filter/VERSION` | Taxonomic filtering | viral-ngs CLI version used (only present if `--lastal_db_fasta` was set). Sample-level, not per-species. |
+| `<genome_N>/<sample>.<genome_N>.selected_reference_accession.txt` | Reference selection | The actual reference accession this `genome_N` folder is — the only place this is recorded. |
+| `<genome_N>/scaffold/<sample>.scaffolded_imputed.fasta` | Scaffolding | Reference-assisted scaffold, before read-based polishing. |
+| `<genome_N>/scaffold/<sample>.intermediate_scaffold.fasta` | Scaffolding | Contigs ordered/oriented against the reference, before gap-imputation. |
+| `<genome_N>/scaffold/<sample>.scaffolding_alt_contigs.fasta` | Scaffolding | Contigs not incorporated into the main scaffold. |
+| `<genome_N>/scaffold/<sample>.refs_skani_dist.full.tsv` | Scaffolding | ANI/alignment-fraction table vs. candidate reference(s) — confidence check on the match. |
+| `<genome_N>/align_to_ref/<sample>.to_ref.*.bam[.bai]` | Round 1 QC | Reads aligned to the pre-polish scaffold. |
+| `<genome_N>/align_to_ref/<sample>.to_ref.flagstat.txt` | Round 1 QC | Mapping rate/pair summary. |
+| `<genome_N>/align_to_ref/<sample>.to_ref.alignment_metrics.txt` | Round 1 QC | Picard alignment QC (mismatch rate, read length, etc). |
+| `<genome_N>/align_to_ref/<sample>.to_ref.raw_wgs_metrics.txt` | Round 1 QC | Coverage depth statistics. |
+| `<genome_N>/align_to_ref/<sample>.to_ref.insert_size_metrics.txt` | Round 1 QC | Fragment size distribution. |
+| `<genome_N>/align_to_ref/<sample>.to_ref.coverage_plot.pdf`/`.txt` | Round 1 QC | Per-position coverage plot, pre-polish. |
+| `<genome_N>/align_to_ref/<sample>.to_ref.isnv.vcf` | Round 1 QC | Intrahost minor-variant calls, pre-polish. |
+| `<genome_N>/refine/<sample>.refined.fasta` | Consensus polish | **Final polished consensus assembly for this species** — the primary output of this mode. |
+| `<genome_N>/refine/<sample>.sites.vcf.gz` | Consensus polish | Variant sites where reads corrected the scaffold. |
+| `<genome_N>/refine/<sample>.diffs.vcf` | Consensus polish | Filtered, higher-confidence subset of the above. |
+| `<genome_N>/refine/<sample>.discordant.vcf` | Consensus polish | Replicate/read-group discordance check (currently always near-empty — RVI has one read group per sample). |
+| `<genome_N>/align_to_self/<sample>.to_self.*.bam[.bai]` | Round 2 QC | Reads realigned to the *final* polished consensus. |
+| `<genome_N>/align_to_self/<sample>.to_self.flagstat.txt` | Round 2 QC | Mapping rate/pair summary, post-polish. |
+| `<genome_N>/align_to_self/<sample>.to_self.alignment_metrics.txt` | Round 2 QC | Picard alignment QC, post-polish. |
+| `<genome_N>/align_to_self/<sample>.to_self.raw_wgs_metrics.txt` | Round 2 QC | Coverage depth statistics, post-polish. |
+| `<genome_N>/align_to_self/<sample>.to_self.insert_size_metrics.txt` | Round 2 QC | Fragment size distribution, post-polish. |
+| `<genome_N>/align_to_self/<sample>.to_self.coverage_plot.pdf`/`.txt` | Round 2 QC | Per-position coverage plot against the final consensus — usually the more publication-relevant plot. |
+| `<genome_N>/align_to_self/<sample>.to_self.isnv.vcf` | Round 2 QC | Intrahost minor-variant calls against the final consensus — usually the more meaningful iSNV set. |
+
+(A handful of intermediate files — the extracted reference fasta, the LASTAL-filtered
+BAM, and the scaffold step's internal copy of the chosen reference — are produced but
+not published, since they're either fully re-derivable from cache or duplicate one of
+the files above.)
+
 ## Data-Storage and permissions
 
 This pipeline directly copies the CRAM files from iRODS and unpacks them into the .fastq files to be used; please allow for plenty of available disk space quota to allow for this decompression.  
