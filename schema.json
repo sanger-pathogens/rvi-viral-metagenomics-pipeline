@@ -13,6 +13,10 @@
             "minimum_fastq_reads": {
                 "default": 0,
                 "help_text": "minimum number of reads (in a single paired-end read file) required to allow a sample to continue into the pipeline."
+            },
+            "assisted_denovo_assembly": {
+                "default": "false",
+                "help_text": "Activate assisted de novo viral genome assembly mode: replaces the default metagenomic-discovery flow (geNomad/vRhyme/CheckV/Kraken2Bracken/vContact3) with geNomad family-bin reference-assisted scaffolding and align-call-refine consensus polishing for a targeted/known-organism run. See rvi_toolbox/subworkflows/ASSISTED_ASSEMBLY.md for details."
             }
         },
         "Error options": {

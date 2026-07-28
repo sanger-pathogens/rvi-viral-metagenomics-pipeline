@@ -9,7 +9,6 @@ include { validate_parameters         } from './modules/validate_params.nf'
 include { MIXED_INPUT         } from './rvi_toolbox/subworkflows/mixed_input.nf'
 include { VERIFY_FASTQ         } from "./rvi_toolbox/subworkflows/verify_fastq.nf"
 include { SUBSAMPLE_ITER       } from "./rvi_toolbox/subworkflows/subsample.nf"
-include { VIRAL_MSWEEP         } from "./rvi_toolbox/subworkflows/msweep.nf"
 include { PREPROCESSING        } from "./rvi_toolbox/subworkflows/preprocessing.nf"
 include { ASSEMBLE_META        } from "./rvi_toolbox/subworkflows/assemble.nf"
 include { KRAKEN2BRACKEN       } from './rvi_toolbox/subworkflows/kraken2bracken.nf'
@@ -18,25 +17,30 @@ include { GENOMAD_CLASSIFY     } from './rvi_toolbox/subworkflows/genomad.nf'
 include { VRHYME_BIN           } from './rvi_toolbox/subworkflows/vrhyme.nf'
 include { CHECKV_QC            } from './rvi_toolbox/subworkflows/checkv.nf'
 include { VCONTACT3_RUN        } from './rvi_toolbox/subworkflows/vcontact3.nf'
+include { TAXONOMY_BINNING     } from './rvi_toolbox/subworkflows/taxonomy_binning.nf'
+include { SCAFFOLD_ASSEMBLY    } from './rvi_toolbox/subworkflows/scaffold.nf'
+include { REFBASED_REFINE      } from './rvi_toolbox/subworkflows/refbased_refine.nf'
 
 def logo = NextflowTool.logo(workflow, params.monochrome_logs)
 
 log.info logo
 
 def printHelp() {
-    NextflowTool.help_message(["${workflow.ProjectDir}/schema.json", 
-                              "${workflow.ProjectDir}/rvi_toolbox/subworkflows/irods.json",
+    NextflowTool.help_message("${workflow.ProjectDir}/schema.json",
+                              ["${workflow.ProjectDir}/rvi_toolbox/subworkflows/irods.json",
                                "${workflow.ProjectDir}/rvi_toolbox/subworkflows/mixed_input.json",
                                "${workflow.ProjectDir}/rvi_toolbox/subworkflows/preprocessing.json",
                                "${workflow.ProjectDir}/rvi_toolbox/subworkflows/subsample.json",
-                               "${workflow.ProjectDir}/rvi_toolbox/subworkflows/msweep.json",
                                "${workflow.ProjectDir}/rvi_toolbox/subworkflows/assemble.json",
                                "${workflow.ProjectDir}/rvi_toolbox/subworkflows/kraken2bracken.json",
                                "${workflow.ProjectDir}/rvi_toolbox/subworkflows/abundance_estimation.json",
                                "${workflow.ProjectDir}/rvi_toolbox/subworkflows/genomad.json",
                                "${workflow.ProjectDir}/rvi_toolbox/subworkflows/vrhyme.json",
                                "${workflow.ProjectDir}/rvi_toolbox/subworkflows/checkv.json",
-                               "${workflow.ProjectDir}/rvi_toolbox/subworkflows/vcontact3.json"],
+                               "${workflow.ProjectDir}/rvi_toolbox/subworkflows/vcontact3.json",
+                               "${workflow.ProjectDir}/rvi_toolbox/subworkflows/taxonomy_binning.json",
+                               "${workflow.ProjectDir}/rvi_toolbox/subworkflows/scaffold.json",
+                               "${workflow.ProjectDir}/rvi_toolbox/subworkflows/refbased_refine.json"],
     params.monochrome_logs, log)
 }
 
@@ -67,33 +71,44 @@ workflow {
         .set{ ready_reads_ch }
     }
 
-    VIRAL_MSWEEP(ready_reads_ch)
     ASSEMBLE_META(ready_reads_ch)
 
     GENOMAD_CLASSIFY(ASSEMBLE_META.out.contigs_channel)
-    // Pooled bowtie + coverm + per-sample vRhyme (ViWrap-style).
-    VRHYME_BIN(
-        GENOMAD_CLASSIFY.out.virus_fna,
-        GENOMAD_CLASSIFY.out.virus_summary,
-        ready_reads_ch
-    )
-
-    CHECKV_QC(
-        GENOMAD_CLASSIFY.out.virus_fna,
-        VRHYME_BIN.out.bins_fasta
-    )
-
     ABUNDANCE_ESTIMATION(ready_reads_ch)
 
-    KRAKEN2BRACKEN(ready_reads_ch)
+    if (params.assisted_denovo_assembly) {
+        // Assisted de novo viral genome assembly mode: geNomad family bins,
+        // reference-assisted scaffolding, and align-call-refine consensus
+        // polishing - replacing the metagenomic-discovery flow below entirely.
+        // See rvi_toolbox/subworkflows/ASSISTED_ASSEMBLY.md for full details
+        TAXONOMY_BINNING(GENOMAD_CLASSIFY.out.virus_summary, GENOMAD_CLASSIFY.out.virus_fna)
 
-    // Pipeline-level final step: barrier on every sample's vRhyme finishing,
-    // then run vContact3 once across the whole batch.
-    VCONTACT3_RUN(
-        GENOMAD_CLASSIFY.out.virus_proteins,
-        GENOMAD_CLASSIFY.out.virus_summary,
-        VRHYME_BIN.out.membership,
-        VRHYME_BIN.out.bins_fasta,
-        CHECKV_QC.out.virus_scaffolds_quality_summary
-    )
+        SCAFFOLD_ASSEMBLY(ASSEMBLE_META.out.contigs_channel, ABUNDANCE_ESTIMATION.out.genome_info_file, TAXONOMY_BINNING.out.family_bins)
+
+        REFBASED_REFINE(ready_reads_ch, SCAFFOLD_ASSEMBLY.out.scaffold_fasta)
+    } else {
+        // Pooled bowtie + coverm + per-sample vRhyme (ViWrap-style).
+        VRHYME_BIN(
+            GENOMAD_CLASSIFY.out.virus_fna,
+            GENOMAD_CLASSIFY.out.virus_summary,
+            ready_reads_ch
+        )
+
+        CHECKV_QC(
+            GENOMAD_CLASSIFY.out.virus_fna,
+            VRHYME_BIN.out.bins_fasta
+        )
+
+        KRAKEN2BRACKEN(ready_reads_ch)
+
+        // Pipeline-level final step: barrier on every sample's vRhyme finishing,
+        // then run vContact3 once across the whole batch.
+        VCONTACT3_RUN(
+            GENOMAD_CLASSIFY.out.virus_proteins,
+            GENOMAD_CLASSIFY.out.virus_summary,
+            VRHYME_BIN.out.membership,
+            VRHYME_BIN.out.bins_fasta,
+            CHECKV_QC.out.virus_scaffolds_quality_summary
+        )
+    }
 }
